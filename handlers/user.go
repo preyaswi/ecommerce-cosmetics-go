@@ -13,7 +13,7 @@ import (
 func Signup(c *gin.Context) {
 	var userSignup models.SignupDetail
 	if err := c.ShouldBindJSON(&userSignup); err != nil {
-		errRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong formattttt 🙌", nil, err.Error())
+		errRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errRes)
 		return
 	}

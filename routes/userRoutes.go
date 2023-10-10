@@ -2,6 +2,7 @@ package routes
 
 import (
 	"firstpro/handlers"
+	"firstpro/middleware"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -14,11 +15,16 @@ func UserRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/send-otp", handlers.SendOTP)
 	r.POST("/verify-otp", handlers.VerifyOTP)
 
+	r.GET("/products", handlers.ShowAllProducts)
+	r.GET("/products/page/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
+	r.GET("/products/:id", handlers.ShowIndividualProducts)
 
-
-		r.GET(" ", handlers.ShowAllProducts)
-		r.GET("/page/:page", handlers.ShowAllProducts)
-		// r.GET("/:id", handlers.ShowIndividualProducts)
+	//ADMIN LOGIN
+	r.POST("/admin-login", handlers.AdminLogin)
+	r.GET("/dashboard", middleware.AuthMIddleware(), handlers.DashBoard)
+	r.GET("/get-users", handlers.GetUsers)
+	r.GET("get-users/:page", handlers.GetUsers)
+	r.POST("/add-users", handlers.AddNewUsers)
 
 	return r
 

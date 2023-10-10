@@ -36,7 +36,7 @@ func CheckUserExistsByPhone(phone string) (*domain.User, error) {
 
 func UserSignup(user models.SignupDetail) (models.SignupDetailResponse, error) {
 	var signupDetail models.SignupDetailResponse
-	err := database.DB.Raw("INSERT INTO users(firstname,lastname,email,password,phone)VALUES(?,?,?,?,?)RETURNING id,firstname,lastname,email,phone", user.FirstName, user.LastName, user.Email, user.Password, user.Phone).Scan(&signupDetail).Error
+	err := database.DB.Raw("INSERT INTO users(firstname,lastname,email,password,phone)VALUES(?,?,?,?,?)RETURNING id,firstname,lastname,email,phone", user.Firstname, user.Lastname, user.Email, user.Password, user.Phone).Scan(&signupDetail).Error
 	if err != nil {
 		fmt.Println("Repository error:", err)
 		return models.SignupDetailResponse{}, err
