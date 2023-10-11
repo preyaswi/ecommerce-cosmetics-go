@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"firstpro/domain"
 	"firstpro/helper"
 	"firstpro/repository"
@@ -67,4 +68,22 @@ func GetUsers(page int, count int) ([]models.UserDetailsAtAdmin, error) {
 
 	return userDetails, nil
 
+}
+
+func BlockUser(id int) error {
+	user, err := repository.GetUserByID(id)
+	if err != nil {
+		return err
+	}
+	if user.Blocked {
+		return errors.New("already blocked")
+	}else{
+		user.Blocked=true
+	}
+	
+	err=repository.UpdateBlockUserByID(user)
+	if err!=nil{
+		return err
+	}
+	return nil
 }

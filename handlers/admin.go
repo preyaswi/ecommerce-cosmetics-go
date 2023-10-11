@@ -4,6 +4,7 @@ import (
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -81,7 +82,7 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 }
 
-func  AddNewUsers(c *gin.Context) {
+func AddNewUsers(c *gin.Context) {
 	var newUser models.SignupDetail
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		errRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
@@ -103,4 +104,36 @@ func  AddNewUsers(c *gin.Context) {
 	}
 	succRes := response.ClientResponse(http.StatusOK, "new user created", userCreated, nil)
 	c.JSON(http.StatusOK, succRes)
+}
+
+func BlockUser(c *gin.Context) {
+
+	idStr := c.Param("id")
+	fmt.Println("idStr:", idStr)
+
+	id, err := strconv.Atoi(idStr)
+
+	fmt.Println("id:", id)
+
+	// fmt.Println(id)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
+		fmt.Println(err.Error(), "😁")
+
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+
+	}
+	err = usecase.BlockUser(id)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "user could not be blocked", nil, err.Error())
+		fmt.Println(err.Error(), "😊")
+
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully blocked the user", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
 }

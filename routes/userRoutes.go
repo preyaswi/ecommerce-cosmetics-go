@@ -21,10 +21,15 @@ func UserRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	//ADMIN LOGIN
 	r.POST("/admin-login", handlers.AdminLogin)
-	r.GET("/dashboard", middleware.AuthMIddleware(), handlers.DashBoard)
-	r.GET("/get-users", handlers.GetUsers)
-	r.GET("get-users/:page", handlers.GetUsers)
-	r.POST("/add-users", handlers.AddNewUsers)
+	r.Use(middleware.AuthMIddleware())
+	{
+
+		r.GET("/dashboard", handlers.DashBoard)
+		r.GET("/get-users", handlers.GetUsers)
+		r.GET("get-users/:page",handlers.GetUsers)
+		r.POST("get-users/add-users",handlers.AddNewUsers)
+		r.GET("/get-users/block-users/:id",handlers.BlockUser)
+	}
 
 	return r
 
