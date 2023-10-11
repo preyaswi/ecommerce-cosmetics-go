@@ -77,12 +77,28 @@ func BlockUser(id int) error {
 	}
 	if user.Blocked {
 		return errors.New("already blocked")
-	}else{
-		user.Blocked=true
+	} else {
+		user.Blocked = true
 	}
-	
-	err=repository.UpdateBlockUserByID(user)
-	if err!=nil{
+
+	err = repository.UpdateBlockUserByID(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UnBlockUser(id int) error {
+	user, err := repository.GetUserByID(id)
+	if err != nil {
+		return err
+	}
+	if user.Blocked == false {
+		return errors.New("user is already unblocked")
+	} else {
+		user.Blocked = true
+	}
+	err = repository.UpdateBlockUserByID(user)
+	if err != nil {
 		return err
 	}
 	return nil

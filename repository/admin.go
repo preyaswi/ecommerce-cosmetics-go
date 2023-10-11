@@ -5,7 +5,7 @@ import (
 	database "firstpro/db"
 	"firstpro/domain"
 	"firstpro/utils/models"
-	"fmt"
+
 
 	"gorm.io/gorm"
 )
@@ -79,7 +79,6 @@ func GetUserByID(id int) (*domain.User, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		fmt.Println(result.Error, "😁")
 		return nil, result.Error
 	}
 	if err := database.DB.Raw("select * from users where id=?", id).Scan(&user).Error; err != nil {
@@ -90,8 +89,6 @@ func GetUserByID(id int) (*domain.User, error) {
 func UpdateBlockUserByID(user *domain.User) error {
 	err := database.DB.Exec("update users set blocked=? where id=?", user.Blocked, user.ID).Error
 	if err != nil {
-		fmt.Println(err, "😂")
-
 		return err
 	}
 	return nil

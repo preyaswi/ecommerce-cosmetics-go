@@ -109,13 +109,7 @@ func AddNewUsers(c *gin.Context) {
 func BlockUser(c *gin.Context) {
 
 	idStr := c.Param("id")
-	fmt.Println("idStr:", idStr)
-
 	id, err := strconv.Atoi(idStr)
-
-	fmt.Println("id:", id)
-
-	// fmt.Println(id)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
 		fmt.Println(err.Error(), "😁")
@@ -134,6 +128,25 @@ func BlockUser(c *gin.Context) {
 	}
 
 	successRes := response.ClientResponse(http.StatusOK, "Successfully blocked the user", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+func UnBlockUser(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+
+	}
+	err = usecase.UnBlockUser(id)
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusBadRequest, "user couldn't blocked", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errRes)
+		return
+	}
+	successRes := response.ClientResponse(http.StatusOK, "Successfully unblocked the user", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 
 }

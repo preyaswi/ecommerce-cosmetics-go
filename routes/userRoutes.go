@@ -26,9 +26,11 @@ func UserRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 		r.GET("/dashboard", handlers.DashBoard)
 		r.GET("/get-users", handlers.GetUsers)
-		r.GET("get-users/:page",handlers.GetUsers)
-		r.POST("get-users/add-users",handlers.AddNewUsers)
-		r.GET("/get-users/block-users/:id",handlers.BlockUser)
+		r.GET("get-users/:page", handlers.GetUsers)
+		r.POST("get-users/add-users", handlers.AddNewUsers)
+		r.GET("/get-users/block-users/:id", handlers.BlockUser)
+		r.GET("/get-users/un-block-users/:id", handlers.UnBlockUser)
+
 	}
 
 	return r
