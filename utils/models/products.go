@@ -23,3 +23,7 @@ type ProductReceiver struct {
 	Price         float64 `json:"price"`
 	ProductStatus string  `json:"product_status"`
 }
+type SetNewName struct {
+	Current string `json:"current"`
+	New     string `json:"new"`
+}
