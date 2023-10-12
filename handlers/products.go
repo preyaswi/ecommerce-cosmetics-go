@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"firstpro/domain"
 	"firstpro/usecase"
 	"firstpro/utils/response"
 	"fmt"
@@ -67,5 +68,24 @@ func ShowIndividualProducts(c *gin.Context) {
 
 	successRes := response.ClientResponse(http.StatusOK, "Product details retrieved successfully", product, nil)
 	c.JSON(http.StatusOK, successRes)
+
+}
+func AddCategory(c *gin.Context) {
+	var category domain.Category
+	if err := c.ShouldBindJSON(&category); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	categoryResponse, err := usecase.AddCategory(category)
+	if err!=nil{
+		errRes:=response.ClientResponse(http.StatusBadRequest,"could not add the category",nil, err.Error())
+		c.JSON(http.StatusBadRequest,errRes)
+		return
+	}
+	
+	successRes := response.ClientResponse(http.StatusOK, "Successfully added Category", categoryResponse, nil)
+	c.JSON(http.StatusOK, successRes)
+
 
 }

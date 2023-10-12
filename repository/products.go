@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	database "firstpro/db"
+	"firstpro/domain"
 	"firstpro/utils/models"
 	"fmt"
 
@@ -52,7 +53,7 @@ JOIN
 	   categories c ON p.category_id=c.id
 WHERE
 	   p.id=?`, id).Scan(&product)
-	 
+
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, result.Error
@@ -60,4 +61,18 @@ WHERE
 		return nil, result.Error
 	}
 	return &product, nil
+}
+func AddCategory(category domain.Category) (domain.Category, error) {
+	var b string
+	err := database.DB.Raw("insert into categories (category_name) values (?) returning category_name", category.CategoryName).Scan(&b).Error
+	if err != nil {
+		return domain.Category{}, err
+	}
+	var categoryResponse domain.Category
+	err = database.DB.Raw("SELECT C.id ,C.category_name FROM categories c WHERE c.category_name = ?", b).Scan(&categoryResponse).Error
+	if err != nil {
+		return domain.Category{}, err
+	}
+
+	return categoryResponse, nil
 }

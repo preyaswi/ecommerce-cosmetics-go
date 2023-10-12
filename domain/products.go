@@ -18,5 +18,5 @@ type Products struct {
 }
 type Category struct {
 	ID           uint   `json:"id" gorm:"unique; not null"`
-	CategoryName string `json:"category_name"`
+	CategoryName string `json:"category_name"  gorm:"unique; not null"`
 }

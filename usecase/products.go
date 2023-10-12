@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"firstpro/domain"
 	"firstpro/repository"
 	"firstpro/utils/models"
 	"fmt"
@@ -32,4 +33,11 @@ func ShowIndividualProducts(id int) (*models.ProductBrief, error) {
 	fmt.Println("321423")
 	return product, nil
 
+}
+func AddCategory(category domain.Category) (domain.Category, error) {
+	productResponse, err := repository.AddCategory(category)
+	if err != nil {
+		return domain.Category{}, err
+	}
+	return productResponse, nil
 }

@@ -30,7 +30,9 @@ func UserRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 		r.POST("get-users/add-users", handlers.AddNewUsers)
 		r.GET("/get-users/block-users/:id", handlers.BlockUser)
 		r.GET("/get-users/un-block-users/:id", handlers.UnBlockUser)
-
+		// r.GET("/products", handlers.ShowAllProducts)
+		// r.POST("/products/add-product", handlers.AddProduct)
+		r.POST("/category/add",handlers.AddCategory)
 	}
 
 	return r
