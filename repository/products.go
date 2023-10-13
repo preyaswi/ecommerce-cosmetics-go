@@ -105,6 +105,7 @@ func UpdateCategory(current, new string) (domain.Category, error) {
 }
 func DeleteCategory(categoryID string) error {
 	id, err := strconv.Atoi(categoryID)
+	fmt.Println(id)
 	if err != nil {
 		return errors.New("couldn't convert")
 	}
