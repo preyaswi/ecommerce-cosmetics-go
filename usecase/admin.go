@@ -46,6 +46,10 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 	if err != nil {
 		return models.CompleteAdminDashboard{}, err
 	}
+	orderDetails, err := repository.DashBoardOrder()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
 
 	productDetails, err := repository.DashBoardProductDetails()
 	if err != nil {
@@ -56,6 +60,7 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 
 		DashboardUser:    userDetails,
 		DashBoardProduct: productDetails,
+		DashboardOrder:   orderDetails,
 	}, nil
 
 }
@@ -92,7 +97,7 @@ func UnBlockUser(id int) error {
 	if err != nil {
 		return err
 	}
-	if user.Blocked == false {
+	if !user.Blocked {
 		return errors.New("user is already unblocked")
 	} else {
 		user.Blocked = true
@@ -102,4 +107,62 @@ func UnBlockUser(id int) error {
 		return err
 	}
 	return nil
+}
+
+func ApproveOrder(orderID string) error {
+	ok, err := repository.CheckOrderID(orderID)
+	if !ok {
+		return err
+	}
+
+	shipmentStatus, err := repository.GetShipmentStatus(orderID)
+	if err != nil {
+		return err
+	}
+
+	if shipmentStatus == "cancelled" {
+
+		return errors.New("the order is cancelled, cannot approve it")
+	}
+
+	if shipmentStatus == "pending" {
+
+		return errors.New("the order is pending, cannot approve it")
+	}
+	if shipmentStatus == "processing" {
+		fmt.Println("reached here")
+		err := repository.ApproveOrder(orderID)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	// if the shipment status is not processing or cancelled. Then it is defenetely cancelled
+	return nil
+
+}
+
+func CancelOrderFromAdminSide(orderID string) error {
+
+	orderProducts, err := repository.GetProductDetailsFromOrders(orderID)
+	if err != nil {
+		return err
+	}
+
+	err = repository.CancelOrders(orderID)
+	if err != nil {
+		return err
+	}
+
+	// update the quantity to products since the order is cancelled
+	err = repository.UpdateQuantityOfProduct(orderProducts)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }

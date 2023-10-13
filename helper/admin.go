@@ -34,6 +34,7 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 	tokenString, err := token.SignedString([]byte(cfg.KEY_FOR_ADMIN))
 
 	if err != nil {
+		fmt.Println("Error is ", err)
 		return "", err
 	}
 
@@ -54,7 +55,7 @@ func ValidateToken(tokenString string) (*authCustomClaimsAdmin, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	
 	if claims, ok := token.Claims.(*authCustomClaimsAdmin); ok && token.Valid {
 		return claims, nil
 	}

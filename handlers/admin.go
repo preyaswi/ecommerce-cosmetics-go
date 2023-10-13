@@ -25,6 +25,7 @@ func AdminLogin(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errRes)
 		return
 	}
+
 	successRes := response.ClientResponse(http.StatusOK, "Admin authenticated successfully", admin, nil)
 	c.JSON(http.StatusOK, successRes)
 
@@ -147,6 +148,41 @@ func UnBlockUser(c *gin.Context) {
 		return
 	}
 	successRes := response.ClientResponse(http.StatusOK, "Successfully unblocked the user", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+
+
+func ApproveOrder(c *gin.Context) {
+
+	orderId := c.Param("order_id")
+
+	err := usecase.ApproveOrder(orderId)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "could not approve the order", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Order approved successfully", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+
+func  CancelOrderFromAdminSide(c *gin.Context) {
+
+	orderID := c.Param("order_id")
+
+	err := usecase.CancelOrderFromAdminSide(orderID)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not cancel the order", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Cancel Successfull", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 
 }
