@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -59,4 +61,132 @@ func UserLoginWithPassword(c *gin.Context) {
 	successRes := response.ClientResponse(http.StatusCreated, "User successfully Logged In With password", userLoggedInWithPassword, nil)
 	c.JSON(http.StatusCreated, successRes)
 
+}
+
+func GetAllAddress(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+
+	// userId := c.Param("user_id")
+	// userID, err := strconv.Atoi(userId)
+
+	addressInfo, err := usecase.GetAllAddress(userID.(int))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "User Address", addressInfo, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+
+func AddAddress(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+
+	var address models.AddressInfo
+
+	if err := c.ShouldBindJSON(&address); err != nil {
+		errRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errRes)
+		return
+	}
+
+	err := validator.New().Struct(address)
+
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusBadRequest, "constraints does not match", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errRes)
+		return
+	}
+	if err := usecase.AddAddress(userID.(int), address); err != nil {
+		errRes := response.ClientResponse(http.StatusBadRequest, "error in adding address", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errRes)
+		return
+
+	}
+
+	SuccessRes := response.ClientResponse(200, "address added successfully", nil, nil)
+
+	c.JSON(200, SuccessRes)
+
+}
+
+func UserDetails(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+
+	userDetails, err := usecase.UserDetails(userID.(int))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "user Details", userDetails, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+func UpdateUserDetails(c *gin.Context) {
+
+	user_id, _ := c.Get("user_id")
+
+	var user models.UsersProfileDetails
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	updatedDetails, err := usecase.UpdateUserDetails(user, user_id.(int))
+	fmt.Println(updatedDetails, "🙌")
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed update user", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Updated User Details", updatedDetails, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+
+func UpdatePassword(c *gin.Context) {
+	user_id, _ := c.Get("user_id")
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, "userID", user_id.(int))
+	var body models.UpdatePassword
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err := usecase.UpdatePassword(ctx, body)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed updating password", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusCreated, "Password updated successfully", nil, nil)
+	c.JSON(http.StatusCreated, successRes)
+}
+
+func CheckOut(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+	checkoutDetails, err := usecase.Checkout(userID.(int))
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Checkout Page loaded successfully", checkoutDetails, nil)
+	c.JSON(http.StatusOK, successRes)
 }
