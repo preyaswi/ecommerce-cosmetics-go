@@ -80,7 +80,7 @@ func RemoveFromCart(product_id int, user_id int) (models.CartResponse, error) {
 		return models.CartResponse{}, err
 	}
 	if !ok {
-		return models.CartResponse{}, errors.New("product does'nt exist in the cart")
+		return models.CartResponse{}, errors.New("product doesn't exist in the cart")
 	}
 	var cartDetails struct {
 		Quantity   int

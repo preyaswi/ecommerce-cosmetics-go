@@ -109,14 +109,14 @@ func UpdateCategory(c *gin.Context) {
 
 }
 func DeleteCategory(c *gin.Context) {
-categoryID:=c.Query("id")
-err:=usecase.DeleteCategory(categoryID)
-if err!=nil{
-	errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+	categoryID := c.Query("id")
+	err := usecase.DeleteCategory(categoryID)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
-}
-successRes := response.ClientResponse(http.StatusOK, "Successfully deleted the Category", nil, nil)
+	}
+	successRes := response.ClientResponse(http.StatusOK, "Successfully deleted the Category", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 }
 
@@ -125,6 +125,7 @@ func FilterCategory(c *gin.Context) {
 	var data map[string]int
 
 	if err := c.ShouldBindJSON(&data); err != nil {
+		fmt.Println("afhcjamj")
 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return

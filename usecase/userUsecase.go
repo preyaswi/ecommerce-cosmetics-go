@@ -107,6 +107,7 @@ func UserLoginWithPassword(user models.LoginDetail) (*models.TokenUser, error) {
 }
 
 func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
+	fmt.Println("👏")
 	addressInfo, err := repository.GetAllAddress(userId)
 	if err != nil {
 		return models.AddressInfoResponse{}, err
@@ -129,10 +130,17 @@ func UserDetails(userID int) (models.UsersProfileDetails, error) {
 
 func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (models.UsersProfileDetails, error) {
 	userExist := repository.CheckUserAvailability(userDetails.Email)
-
 	// update with email that does not already exist
 	if userExist {
 		return models.UsersProfileDetails{}, errors.New("user already exist, choose different email")
+	}
+	userExistByPhone,err:=repository.CheckUserExistsByPhone(userDetails.Phone)
+	
+	if err != nil {
+		return models.UsersProfileDetails{}, errors.New("error with server")
+	}
+	if userExistByPhone != nil {
+		return models.UsersProfileDetails{}, errors.New("user with this phone is already exists")
 	}
 	// which all field are not empty (which are provided from the front end should be updated)
 	if userDetails.Email != "" {
@@ -142,7 +150,7 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 	if userDetails.Firstname != "" {
 		repository.UpdateFirstName(userDetails.Firstname, userID)
 	}
-	if userDetails.Firstname != "" {
+	if userDetails.Lastname != "" {
 		repository.UpdateLastName(userDetails.Lastname, userID)
 	}
 
@@ -152,6 +160,10 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 
 	return repository.UserDetails(userID)
 
+}
+
+func CheckUserExistsByPhone(s string) {
+	panic("unimplemented")
 }
 func UpdatePassword(ctx context.Context, body models.UpdatePassword) error {
 	var userID int

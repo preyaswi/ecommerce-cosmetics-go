@@ -72,10 +72,10 @@ type AddressInfo struct {
 	City      string `json:"city"`
 }
 type UsersProfileDetails struct {
-	Firstname string `json:"firstname" binding:"required"`
-	Lastname  string `json:"lastname" binding:"required"`
-	Email     string `json:"email" binding:"required"`
-	Phone     string `json:"phone" binding:"required"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email" `
+	Phone     string `json:"phone"`
 	// ReferralCode string `json:"referral_code" binding:"required"`
 }
 

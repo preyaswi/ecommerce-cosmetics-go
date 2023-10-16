@@ -152,7 +152,6 @@ func UnBlockUser(c *gin.Context) {
 
 }
 
-
 func ApproveOrder(c *gin.Context) {
 
 	orderId := c.Param("order_id")
@@ -170,7 +169,7 @@ func ApproveOrder(c *gin.Context) {
 
 }
 
-func  CancelOrderFromAdminSide(c *gin.Context) {
+func CancelOrderFromAdminSide(c *gin.Context) {
 
 	orderID := c.Param("order_id")
 

@@ -5,6 +5,7 @@ import (
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -63,7 +64,11 @@ func UserLoginWithPassword(c *gin.Context) {
 }
 
 func GetAllAddress(c *gin.Context) {
+
 	userID, _ := c.Get("user_id")
+
+	// userId := c.Param("user_id")
+	// userID, err := strconv.Atoi(userId)
 
 	addressInfo, err := usecase.GetAllAddress(userID.(int))
 	if err != nil {
@@ -136,6 +141,7 @@ func UpdateUserDetails(c *gin.Context) {
 	}
 
 	updatedDetails, err := usecase.UpdateUserDetails(user, user_id.(int))
+	fmt.Println(updatedDetails, "🙌")
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed update user", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)

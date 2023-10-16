@@ -63,7 +63,6 @@ func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
 	if err := database.DB.Raw("select * from addresses where user_id = ?", userId).Scan(&addressInfoResponse).Error; err != nil {
 		return models.AddressInfoResponse{}, err
 	}
-	fmt.Println(addressInfoResponse, "HEyy")
 	return addressInfoResponse, nil
 }
 
