@@ -7,12 +7,41 @@ import (
 	"firstpro/repository"
 	"firstpro/utils/models"
 	"fmt"
+	"regexp"
 
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 )
 
+func IsEmailValid(email string) bool {
+
+	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	match, _ := regexp.MatchString(emailRegex, email)
+	if match {
+		return true
+	} else {
+		return false
+	}
+}
+func IsValidPhoneNumber(phoneNumber string) bool {
+
+	phoneRegex := `^[789]\d{9}$`
+	match, _ := regexp.MatchString(phoneRegex, phoneNumber)
+	if match {
+		return true
+	} else {
+		return false
+	}
+}
 func UserSignup(user models.SignupDetail) (*models.TokenUser, error) {
+
+	if !IsEmailValid(user.Email) {
+		return &models.TokenUser{}, errors.New("invalid email format")
+	}
+
+	if !IsValidPhoneNumber(user.Phone) {
+		return &models.TokenUser{}, errors.New("invalid phone number format")
+	}
 	//check whether the user already exsist by looking the email and the phone number provided
 	email, err := repository.CheckUserExistsByEmail(user.Email)
 
@@ -129,13 +158,20 @@ func UserDetails(userID int) (models.UsersProfileDetails, error) {
 }
 
 func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (models.UsersProfileDetails, error) {
+	if !IsEmailValid(userDetails.Email) {
+		return models.UsersProfileDetails{}, errors.New("invalid email format")
+	}
+
+	if !IsValidPhoneNumber(userDetails.Phone) {
+		return models.UsersProfileDetails{}, errors.New("invalid phone number format")
+	}
 	userExist := repository.CheckUserAvailability(userDetails.Email)
 	// update with email that does not already exist
 	if userExist {
 		return models.UsersProfileDetails{}, errors.New("user already exist, choose different email")
 	}
-	userExistByPhone,err:=repository.CheckUserExistsByPhone(userDetails.Phone)
-	
+	userExistByPhone, err := repository.CheckUserExistsByPhone(userDetails.Phone)
+
 	if err != nil {
 		return models.UsersProfileDetails{}, errors.New("error with server")
 	}

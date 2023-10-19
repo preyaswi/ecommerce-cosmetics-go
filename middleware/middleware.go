@@ -32,7 +32,6 @@ func AuthorizationMiddleware() gin.HandlerFunc {
 		}
 		tokenpart := splitted[1]
 		tokenClaims, err := helper.ValidateToken(tokenpart)
-		fmt.Println(tokenClaims, "🤣")
 		if err != nil {
 			response := response.ClientResponse(http.StatusUnauthorized, "Invalid Token ", nil, err.Error())
 			c.JSON(http.StatusUnauthorized, response)

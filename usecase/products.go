@@ -101,3 +101,36 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 
 }
 
+func AddProduct(products domain.Products) (domain.Products, error) {
+	productResponse, err := repository.AddProduct(products)
+	if err != nil {
+		return domain.Products{}, err
+	}
+	return productResponse, nil
+}
+func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
+
+	result, err := repository.CheckProductExist(pid)
+	if err != nil {
+
+		return models.ProductUpdateReciever{}, err
+	}
+
+	if !result {
+		return models.ProductUpdateReciever{}, errors.New("there is no product as you mentioned")
+	}
+
+	newcat, err := repository.UpdateProduct(pid, stock)
+	if err != nil {
+		return models.ProductUpdateReciever{}, err
+	}
+
+	return newcat, err
+}
+func DeleteProduct(productID string) error {
+	err := repository.DeleteProduct(productID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
