@@ -142,3 +142,54 @@ func FilterCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+func AddProduct(c *gin.Context) {
+	var product domain.Products
+	if err := c.ShouldBindJSON(&product); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	productResponse, err := usecase.AddProduct(product)
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusBadRequest, "could not add the products", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully added products", productResponse, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+func UpdateProduct(c *gin.Context) {
+
+	var p models.ProductUpdate
+
+	if err := c.BindJSON(&p); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	a, err := usecase.UpdateProduct(p.ProductId, p.Quantity)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "could not update the product quantity", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully updated the product quantity", a, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+func DeleteProduct(c *gin.Context) {
+	productID := c.Query("id")
+	err := usecase.DeleteProduct(productID)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	successRes := response.ClientResponse(http.StatusOK, "Successfully deleted the product", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}

@@ -63,6 +63,70 @@ WHERE
 	}
 	return &product, nil
 }
+
+func AddProduct(product domain.Products) (domain.Products, error) {
+	var p models.ProductReceiver
+	err := database.DB.Raw("insert into products (name,sku,category_id,design_description,brand_id,quantity,price,product_status) values (?,?,?,?,?,?,?,?) returning name,sku,category_id,design_description,brand_id,quantity,price,product_status", product.Name, product.SKU, product.CategoryID, product.DesignDescription, product.BrandID, product.Quantity, product.Price, product.ProductStatus).Scan(&p).Error
+	if err != nil {
+		return domain.Products{}, err
+	}
+	var productResponse domain.Products
+	err = database.DB.Raw("select * from products where products.name=?", p.Name).Scan(&productResponse).Error
+	if err != nil {
+		return domain.Products{}, err
+	}
+	return productResponse, nil
+
+}
+
+func CheckProductExist(pid int) (bool, error) {
+	var k int
+	err := database.DB.Raw("SELECT COUNT(*) FROM products WHERE id=?", pid).Scan(&k).Error
+	if err != nil {
+		return false, err
+	}
+
+	if k == 0 {
+		return false, err
+	}
+
+	return true, err
+}
+func UpdateProduct(pid int, quantity int) (models.ProductUpdateReciever, error) {
+
+	// Check the database connection
+	if database.DB == nil {
+		return models.ProductUpdateReciever{}, errors.New("database connection is nil")
+	}
+
+	// Update the
+	if err := database.DB.Exec("UPDATE products SET quantity = quantity + $1 WHERE id= $2", quantity, pid).Error; err != nil {
+		return models.ProductUpdateReciever{}, err
+	}
+
+	// Retrieve the update
+	var newdetails models.ProductUpdateReciever
+	var newQuantity int
+	if err := database.DB.Raw("SELECT quantity FROM products WHERE id=?", pid).Scan(&newQuantity).Error; err != nil {
+		return models.ProductUpdateReciever{}, err
+	}
+	newdetails.ProductID = pid
+	newdetails.Quantity = newQuantity
+
+	return newdetails, nil
+}
+func DeleteProduct(productID string) error {
+	id, err := strconv.Atoi(productID)
+	fmt.Println(id)
+	if err != nil {
+		return errors.New("couldn't convert")
+	}
+	result := database.DB.Exec("delete from products where id = ?", id)
+	if result.RowsAffected < 1 {
+		return errors.New("no records with that is exist")
+	}
+	return nil
+}
 func AddCategory(category domain.Category) (domain.Category, error) {
 	var b string
 	err := database.DB.Raw("insert into categories (category_name) values (?) returning category_name", category.CategoryName).Scan(&b).Error
@@ -70,7 +134,7 @@ func AddCategory(category domain.Category) (domain.Category, error) {
 		return domain.Category{}, err
 	}
 	var categoryResponse domain.Category
-	err = database.DB.Raw("SELECT C.id ,C.category_name FROM categories c WHERE c.category_name = ?", b).Scan(&categoryResponse).Error
+	err = database.DB.Raw("SELECT id ,category_name FROM categories WHERE category_name = ?", b).Scan(&categoryResponse).Error
 	if err != nil {
 		return domain.Category{}, err
 	}

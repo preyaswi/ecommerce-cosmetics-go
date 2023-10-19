@@ -46,8 +46,11 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/get-users/add-users", middleware.AuthorizationMiddleware(), handlers.AddNewUsers)
 	r.GET("/get-users/block-users/:id", middleware.AuthorizationMiddleware(), handlers.BlockUser)
 	r.GET("/get-users/un-block-users/:id", middleware.AuthorizationMiddleware(), handlers.UnBlockUser)
-	// r.GET("/products", handlers.ShowAllProducts)
-	// r.POST("/products/add-product", handlers.AddProduct)
+
+	r.POST("/products/add-product", middleware.AuthorizationMiddleware(), handlers.AddProduct)
+	r.PUT("/products/update-product", middleware.AuthorizationMiddleware(), handlers.UpdateProduct) //update the product quantity
+	r.DELETE("/products/delete-product", middleware.AuthorizationMiddleware(), handlers.DeleteProduct)
+
 	r.POST("/category/add", middleware.AuthorizationMiddleware(), handlers.AddCategory)
 	r.PUT("/category/update", middleware.AuthorizationMiddleware(), handlers.UpdateCategory)
 	r.DELETE("/category/delete", middleware.AuthorizationMiddleware(), handlers.DeleteCategory)

@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type Products struct {
 	*gorm.Model       `json:"-"`
-	ID                uint     `json:"id" gorm:"unique;not null"`
-	Name              string   `json:"name"`
+	ID                uint     `json:"id"   gorm:"unique; not null"`
+	Name              string   `json:"name"   gorm:"unique; not null"`
 	SKU               string   `json:"sku"`
 	CategoryID        uint     `json:"category_id"`
 	Category          Category `json:"-" gorm:"foreignkey:CategoryID;constraint:OnDelete:CASCADE"`
