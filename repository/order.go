@@ -118,7 +118,7 @@ func CheckOrderID(orderID string) (bool, error) {
 	return count > 0, nil
 
 }
-func  ApproveOrder(orderID string) error {
+func ApproveOrder(orderID string) error {
 
 	err := database.DB.Exec("update orders set shipment_status = 'order placed',approval = true where order_id = ?", orderID).Error
 	if err != nil {
@@ -127,3 +127,55 @@ func  ApproveOrder(orderID string) error {
 	return nil
 }
 
+func GetOrderDetailsByOrderId(orderID string) (models.CombinedOrderDetails, error) {
+
+	var orderDetails models.CombinedOrderDetails
+	err := database.DB.Raw("select orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.state,addresses.pin,addresses.street,addresses.city from orders inner join users on orders.user_id = users.id inner join addresses on users.id = addresses.user_id where order_id = ?", orderID).Scan(&orderDetails).Error
+	if err != nil {
+		return models.CombinedOrderDetails{}, nil
+	}
+
+	return orderDetails, nil
+}
+
+func AddRazorPayDetails(orderID string, razorPayOrderID string) error {
+
+	err := database.DB.Exec("insert into razer_pays (order_id,razor_id) values (?,?)", orderID, razorPayOrderID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func CheckPaymentStatus(orderID string) (string, error) {
+
+	var paymentStatus string
+	err := database.DB.Raw("select payment_status from orders where order_id = ?", orderID).Scan(&paymentStatus).Error
+	if err != nil {
+		return "", err
+	}
+
+	return paymentStatus, nil
+
+}
+
+func UpdatePaymentDetails(orderID string, paymentID string) error {
+
+	err := database.DB.Exec("update razer_pays set payment_id = ? where order_id = ?", paymentID, orderID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func UpdateShipmentAndPaymentByOrderID(shipmentStatus string, paymentStatus string, orderID string) error {
+
+	err := database.DB.Exec("update orders set payment_status = ?, shipment_status = ? where order_id = ?", paymentStatus, shipmentStatus, orderID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

@@ -28,8 +28,26 @@ type DashboardOrder struct {
 	TotalOrder     int
 	TotalOrderItem int
 }
+type DashboardRevenue struct {
+	TodayRevenue float64
+	MonthRevenue float64
+	YearRevenue  float64
+}
+type DashboardAmount struct {
+	CreditedAmount float64
+	PendingAmount  float64
+}
 type CompleteAdminDashboard struct {
 	DashboardUser    DashboardUser
 	DashBoardProduct DashBoardProduct
 	DashboardOrder   DashboardOrder
+	DashboardRevenue DashboardRevenue
+	DashboardAmount  DashboardAmount
+}
+type SalesReport struct {
+	TotalSales      float64
+	TotalOrders     int
+	CompletedOrders int
+	PendingOrders   int
+	TrendingProduct string
 }
