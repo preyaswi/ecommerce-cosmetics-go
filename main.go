@@ -31,9 +31,4 @@ func main() {
 	if err := router.Run(cfg.BASE_URL); err != nil {
 		log.Fatalf("Error starting server on %s: %v", listenAddr, err)
 	}
-	// fmt.Println("Starting server on port 8080...")
-	// err = http.ListenAndServe(":8080", router)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 }

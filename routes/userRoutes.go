@@ -58,9 +58,11 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/category/add", middleware.AuthorizationMiddleware(), handlers.AddCategory)
 	r.PUT("/category/update", middleware.AuthorizationMiddleware(), handlers.UpdateCategory)
 	r.DELETE("/category/delete", middleware.AuthorizationMiddleware(), handlers.DeleteCategory)
-
+	//order
 	r.GET("/approve-order/:order_id", middleware.AuthorizationMiddleware(), handlers.ApproveOrder)
 	r.GET("/cancel-order/:order_id", middleware.AuthorizationMiddleware(), handlers.CancelOrderFromAdminSide)
+	//image cropping
+	r.POST("/image-crop", middleware.AuthorizationMiddleware(), handlers.ImageCropping)
 
 	return r
 

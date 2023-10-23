@@ -5,9 +5,11 @@ import (
 	"firstpro/utils/models"
 	"firstpro/utils/response"
 	"fmt"
+	"image"
 	"net/http"
 	"strconv"
 
+	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
@@ -196,6 +198,23 @@ func FilteredSalesReport(c *gin.Context) {
 	}
 
 	successRes := response.ClientResponse(http.StatusOK, "sales report retrieved successfully", salesReport, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+func ImageCropping(c *gin.Context) {
+	inputImage, err := imaging.Open("static/image-crop.jpg")
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to open image"})
+		return
+	}
+	cropRect := image.Rect(200, 200, 450, 450)
+	croppedImage := imaging.Crop(inputImage, cropRect)
+	err = imaging.Save(croppedImage, "static/output.jpg")
+	if err != nil {
+		c.JSON(500, gin.H{"error": "failed to save the image"})
+		return
+	}
+	successRes := response.ClientResponse(http.StatusOK, "image resized succesfully", inputImage, nil)
 	c.JSON(http.StatusOK, successRes)
 
 }
