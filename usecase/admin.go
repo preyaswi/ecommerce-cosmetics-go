@@ -55,12 +55,21 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 	if err != nil {
 		return models.CompleteAdminDashboard{}, err
 	}
-
+	totalRevenue, err := repository.TotalRevenue()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+	amountDetails, err := repository.AmountDetails()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
 	return models.CompleteAdminDashboard{
 
 		DashboardUser:    userDetails,
 		DashBoardProduct: productDetails,
 		DashboardOrder:   orderDetails,
+		DashboardRevenue: totalRevenue,
+		DashboardAmount:  amountDetails,
 	}, nil
 
 }
@@ -164,5 +173,17 @@ func CancelOrderFromAdminSide(orderID string) error {
 	}
 
 	return nil
+
+}
+func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
+
+	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
+
+	salesReport, err := repository.FilteredSalesReport(startTime, endTime)
+	if err != nil {
+		return models.SalesReport{}, err
+	}
+
+	return salesReport, nil
 
 }

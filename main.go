@@ -23,6 +23,7 @@ func main() {
 	}
 
 	router := gin.Default()
+	router.LoadHTMLGlob("template/*")
 	routes.Routes(router, db)
 
 	listenAddr := fmt.Sprintf("%s:%s", cfg.DBPort, cfg.DBHost)
