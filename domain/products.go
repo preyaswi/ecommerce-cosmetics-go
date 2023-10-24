@@ -20,3 +20,7 @@ type Category struct {
 	ID           uint   `json:"id" gorm:"unique; not null"`
 	CategoryName string `json:"category_name"  gorm:"unique; not null"`
 }
+type ProductImages struct {
+	ID              uint   `json:"id" gorm:"unique; not null"`
+	ProductImageUrl string `json:"product_image_url"`
+}
