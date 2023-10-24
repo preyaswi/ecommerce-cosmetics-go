@@ -62,8 +62,7 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/approve-order/:order_id", middleware.AuthorizationMiddleware(), handlers.ApproveOrder)
 	r.GET("/cancel-order/:order_id", middleware.AuthorizationMiddleware(), handlers.CancelOrderFromAdminSide)
 	//image cropping
-	r.POST("/image-crop", middleware.AuthorizationMiddleware(), handlers.ImageCropping)
-
+	r.POST("/image-crop", middleware.AuthorizationMiddleware(), handlers.CropImage)
 	return r
 
 }
