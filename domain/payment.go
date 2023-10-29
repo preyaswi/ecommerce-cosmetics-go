@@ -7,3 +7,8 @@ type RazerPay struct {
 	RazorID   string `json:"razor_id"`
 	PaymentID string `json:"payment_id"`
 }
+
+type PaymentMethod struct {
+	ID           uint   `gorm:"primarykey"`
+	Payment_Name string `json:"payment_name"`
+}

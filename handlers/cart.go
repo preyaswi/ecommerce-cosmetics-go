@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 func AddToCart(c *gin.Context) {
 	id := c.Param("id")
 
@@ -20,7 +21,7 @@ func AddToCart(c *gin.Context) {
 		return
 	}
 	user_ID, _ := c.Get("user_id")
-	
+
 	cartResponse, err := usecase.AddToCart(product_id, user_ID.(int))
 	if err != nil {
 		errRes := response.ClientResponse(http.StatusBadGateway, "could not add product to the cart", nil, err.Error())

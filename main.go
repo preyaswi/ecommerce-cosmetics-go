@@ -25,6 +25,8 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("template/*")
 	routes.Routes(router, db)
+	routes.AdminRoutes(router, db)
+
 
 	listenAddr := fmt.Sprintf("%s:%s", cfg.DBPort, cfg.DBHost)
 	fmt.Printf("Starting server on %s...\n", cfg.BASE_URL)

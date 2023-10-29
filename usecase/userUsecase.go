@@ -265,3 +265,54 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		Total_Price: grandTotal.FinalPrice,
 	}, nil
 }
+
+func AddToWishlist(product_id int, user_id int) error {
+
+	productExist, err := repository.CheckProductExist(product_id)
+	if err != nil {
+		return err
+	}
+
+	if !productExist {
+		return errors.New("product does not exist")
+	}
+
+	productExistInWishList, err := repository.ProductExistInWishList(product_id, user_id)
+	if err != nil {
+		return err
+	}
+	if productExistInWishList {
+		return errors.New("product already exist in wishlist")
+	}
+
+	err = repository.AddToWishList(user_id, product_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func GetWishList(userID int) ([]models.WishListResponse, error) {
+
+	wishList, err := repository.GetWishList(userID)
+	if err != nil {
+		return []models.WishListResponse{}, err
+	}
+
+	return wishList, err
+}
+func RemoveFromWishlist(productId int, userID int) error {
+	productExistInWishlist, err := repository.ProductExistInWishList(productId, userID)
+	if err != nil {
+		return err
+	}
+	if !productExistInWishlist {
+		return errors.New("error deleting product doesnot exist in the wishlist")
+	}
+
+	err = repository.RemoveFromWishlist(userID, productId)
+	if err != nil {
+		return err
+	}
+	return nil
+}

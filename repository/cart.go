@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"errors"
 	database "firstpro/db"
 	"firstpro/utils/models"
-	"fmt"
+
+	"gorm.io/gorm"
 )
 
 func CheckProduct(product_id int) (bool, string, error) {
@@ -21,13 +23,24 @@ func CheckProduct(product_id int) (bool, string, error) {
 
 		if err != nil {
 
-			fmt.Println(err)
+			
 			return false, "", err
 		}
 		return true, category, nil
 	}
 	return false, "", nil
 }
+// func CheckAddress(address_id int, user_id int) (bool, error) {
+// 	var count int
+
+// 	err := database.DB.Raw("select count(id) from addresses where user_id = $1 and id =$2 ", user_id, address_id).Scan(&count).Error
+
+// 	if err != nil {
+// 		return false, err
+// 	}
+
+// 	return false, nil
+// }
 
 func QuantityOfProductInCart(userId int, productId int) (int, error) {
 	var productQty int
@@ -162,5 +175,33 @@ func EmptyCart(userID int) error {
 	}
 
 	return nil
+
+}
+func GetAllItemsFromCart(userID int) ([]models.Cart, error) {
+
+	var count int
+
+	var cartResponse []models.Cart
+	err := database.DB.Raw("select count(*) from carts where user_id = ?", userID).Scan(&count).Error
+	if err != nil {
+		return []models.Cart{}, err
+	}
+
+	if count == 0 {
+		return []models.Cart{}, nil
+	}
+
+	err = database.DB.Raw("select carts.user_id,users.firstname as user_name,carts.product_id,products.name as product_name,carts.quantity,carts.total_price from carts inner join users on carts.user_id = users.id inner join products on carts.product_id = products.id where user_id = ?", userID).First(&cartResponse).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if len(cartResponse) == 0 {
+				return []models.Cart{}, nil
+			}
+			return []models.Cart{}, err
+		}
+		return []models.Cart{}, err
+	}
+
+	return cartResponse, nil
 
 }
