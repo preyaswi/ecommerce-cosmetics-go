@@ -2,9 +2,33 @@ package repository
 
 import (
 	database "firstpro/db"
+	"firstpro/domain"
+	"firstpro/helper"
 	"firstpro/utils/models"
 	"fmt"
 )
+
+func DoesCartExist(userID int) (bool, error) {
+
+	var exist bool
+	err := database.DB.Raw("select exists(select 1 from carts where user_id = ?)", userID).Scan(&exist).Error
+	if err != nil {
+		return false, err
+	}
+
+	return exist, nil
+}
+
+func AddressExist(orderBody models.OrderIncoming) (bool, error) {
+
+	var count int
+	if err := database.DB.Raw("select count(*) from addresses where user_id = ? and id = ?", orderBody.UserID, orderBody.AddressID).Scan(&count).Error; err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+
+}
 
 func GetOrderDetails(userId int, page int, count int) ([]models.FullOrderDetails, error) {
 	if page == 0 {
@@ -177,5 +201,93 @@ func UpdateShipmentAndPaymentByOrderID(shipmentStatus string, paymentStatus stri
 	}
 
 	return nil
+
+}
+
+func GetCouponDiscountPrice(UserID int, GrandTotal float64) (float64, error) {
+
+	discountPrice, err := helper.GetCouponDiscountPrice(UserID, GrandTotal)
+	if err != nil {
+		return 0.0, err
+	}
+
+	return discountPrice, nil
+
+}
+
+func UpdateCouponDetails(discount_price float64, UserID int) error {
+
+	if discount_price != 0.0 {
+		err := database.DB.Exec("update used_coupons set used = true where user_id = ?", UserID).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func GetWalletAmount(UserID uint) (float64, error) {
+
+	var walletAvailable float64
+	err := database.DB.Raw("select wallet_amount from wallets where user_id = ?", UserID).Scan(&walletAvailable).Error
+	if err != nil {
+		return 0.0, err
+	}
+
+	return walletAvailable, nil
+}
+func UpdateWalletAmount(walletAmount float64, UserID uint) error {
+
+	err := database.DB.Exec("update wallets set wallet_amount = ? where user_id = ? ", walletAmount, UserID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func CreateOrder(orderDetails domain.Order) error {
+
+	err := database.DB.Create(&orderDetails).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func AddOrderItems(orderItemDetails domain.OrderItem, UserID int, ProductID uint, Quantity float64) error {
+
+	// after creating the order delete all cart items and also update the quantity of the product
+	err := database.DB.Omit("id").Create(&orderItemDetails).Error
+	if err != nil {
+		return err
+	}
+
+	err = database.DB.Exec("delete from carts where user_id = ? and product_id = ?", UserID, ProductID).Error
+	if err != nil {
+		return err
+	}
+
+	err = database.DB.Exec("update products set quantity = quantity - ? where id = ?", Quantity, ProductID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+func UpdateUsedOfferDetails(userID uint) error {
+
+	database.DB.Exec("update category_offer_useds set used = true where user_id = ?", userID)
+	database.DB.Exec("update product_offer_useds set used = true where user_id = ?", userID)
+
+	return nil
+}
+
+func GetBriefOrderDetails(orderID string) (domain.OrderSuccessResponse, error) {
+
+	var orderSuccessResponse domain.OrderSuccessResponse
+	database.DB.Raw("select order_id,shipment_status from orders where order_id = ?", orderID).Scan(&orderSuccessResponse)
+	return orderSuccessResponse, nil
 
 }

@@ -5,7 +5,6 @@ import (
 	"firstpro/domain"
 	"firstpro/repository"
 	"firstpro/utils/models"
-	"fmt"
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
@@ -26,12 +25,9 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 }
 func ShowIndividualProducts(id int) (*models.ProductBrief, error) {
 	product, err := repository.ShowIndividualProducts(id)
-	fmt.Println("ahgfvgf", product)
 	if err != nil {
-		fmt.Println("ahcfaecf")
 		return &models.ProductBrief{}, err
 	}
-	fmt.Println("321423")
 	return product, nil
 
 }

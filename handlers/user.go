@@ -5,8 +5,8 @@ import (
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -29,7 +29,7 @@ func Signup(c *gin.Context) {
 	}
 
 	//creating a newuser signup with the given deatil passing into the bussiness logic layer
-	
+
 	userCreated, err := usecase.UserSignup(userSignup)
 	if err != nil {
 		errRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong formaaaaat", nil, err.Error())
@@ -142,7 +142,6 @@ func UpdateUserDetails(c *gin.Context) {
 	}
 
 	updatedDetails, err := usecase.UpdateUserDetails(user, user_id.(int))
-	fmt.Println(updatedDetails, "🙌")
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed update user", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
@@ -189,5 +188,63 @@ func CheckOut(c *gin.Context) {
 	}
 
 	successRes := response.ClientResponse(http.StatusOK, "Checkout Page loaded successfully", checkoutDetails, nil)
+	c.JSON(http.StatusOK, successRes)
+}
+
+func AddWishList(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+	productId := c.Param("id")
+	product_id, err := strconv.Atoi(productId)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "product id is in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	err = usecase.AddToWishlist(product_id, userID.(int))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to add product on wishlist", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "SuccessFully product added to wishlist", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+}
+
+func GetWishList(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+	wishList, err := usecase.GetWishList(userID.(int))
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve wishlist detailss", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "SuccessFully retrieved wishlist", wishList, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+
+func RemoveFromWishlist(c *gin.Context) {
+	userId, _ := c.Get("user_id")
+	productId := c.Param("id")
+	product_id, err := strconv.Atoi(productId)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "product id is in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err = usecase.RemoveFromWishlist( product_id,userId.(int))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "product cannot remove from the wishlist", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	successRes := response.ClientResponse(http.StatusOK, "SuccessFully removed product from the wishlist", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 }

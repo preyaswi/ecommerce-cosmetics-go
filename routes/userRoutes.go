@@ -27,42 +27,30 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.PATCH("/edit-user-profile", middleware.AuthMiddleware(), handlers.UpdateUserDetails)
 	r.POST("/update-password", middleware.AuthMiddleware(), handlers.UpdatePassword)
 
+	//wishlist
+	r.POST("/wish-list/add/:id", middleware.AuthMiddleware(), handlers.AddWishList)
+	r.GET("/wish-list", middleware.AuthMiddleware(), handlers.GetWishList)
+	r.DELETE("/wish-list/delete/:id", middleware.AuthMiddleware(),handlers.RemoveFromWishlist)
+	
+	//cart
 	r.POST("/add-to-cart/:id", middleware.AuthMiddleware(), handlers.AddToCart)
 	r.DELETE("/remove-from-cart/:id", middleware.AuthMiddleware(), handlers.RemoveFromCart)
 	r.GET("/display-cart", middleware.AuthMiddleware(), handlers.DisplayCart)
 	r.DELETE("/empty-cart", middleware.AuthMiddleware(), handlers.EmptyCart)
 
+	//order
+	// r.POST("/orders/add/:id",middleware.AuthMiddleware(),handlers.AddOrder)
+	r.POST("/order-from-cart", middleware.AuthMiddleware(), handlers.OrderItemsFromCart)
 	r.GET("/orders/:page", middleware.AuthMiddleware(), handlers.GetOrderDetails)
 	r.PUT("/cancel-orders/:id", middleware.AuthMiddleware(), handlers.CancelOrder)
+
 	r.GET("/checkout", middleware.AuthMiddleware(), handlers.CheckOut)
 	r.GET("/place-order/:address_id/:payment", middleware.AuthMiddleware(), handlers.PlaceOrder)
 
+	//payment
 	r.GET("/payment", handlers.MakePaymentRazorPay)
 	r.GET("/payment-success", handlers.VerifyPayment)
 
-	//ADMIN LOGIN
-	r.POST("/admin-login", handlers.AdminLogin)
-	r.GET("/dashboard", middleware.AuthorizationMiddleware(), handlers.DashBoard)
-	r.GET("/sales-report/:period", middleware.AuthorizationMiddleware(), handlers.FilteredSalesReport)
-
-	r.GET("/get-users", middleware.AuthorizationMiddleware(), handlers.GetUsers)
-	r.GET("/get-users/:page", middleware.AuthorizationMiddleware(), handlers.GetUsers)
-	r.POST("/get-users/add-users", middleware.AuthorizationMiddleware(), handlers.AddNewUsers)
-	r.GET("/get-users/block-users/:id", middleware.AuthorizationMiddleware(), handlers.BlockUser)
-	r.GET("/get-users/un-block-users/:id", middleware.AuthorizationMiddleware(), handlers.UnBlockUser)
-	//products management
-	r.POST("/products/add-product", middleware.AuthorizationMiddleware(), handlers.AddProduct)
-	r.PUT("/products/update-product", middleware.AuthorizationMiddleware(), handlers.UpdateProduct) //update the product quantity
-	r.DELETE("/products/delete-product", middleware.AuthorizationMiddleware(), handlers.DeleteProduct)
-	//category management
-	r.POST("/category/add", middleware.AuthorizationMiddleware(), handlers.AddCategory)
-	r.PUT("/category/update", middleware.AuthorizationMiddleware(), handlers.UpdateCategory)
-	r.DELETE("/category/delete", middleware.AuthorizationMiddleware(), handlers.DeleteCategory)
-	//order
-	r.GET("/approve-order/:order_id", middleware.AuthorizationMiddleware(), handlers.ApproveOrder)
-	r.GET("/cancel-order/:order_id", middleware.AuthorizationMiddleware(), handlers.CancelOrderFromAdminSide)
-	//image cropping
-	r.POST("/image-crop", middleware.AuthorizationMiddleware(), handlers.CropImage)
 	return r
 
 }

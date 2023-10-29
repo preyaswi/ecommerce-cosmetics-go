@@ -174,3 +174,41 @@ func CheckUserAvailability(email string) bool {
 	return count > 0
 
 }
+
+func ProductExistInWishList(productID int, userID int) (bool, error) {
+
+	var count int
+	err := database.DB.Raw("select count(*) from wish_lists where user_id = ? and product_id = ? ", userID, productID).Scan(&count).Error
+	if err != nil {
+		return false, errors.New("error checking user product already present")
+	}
+
+	return count > 0, nil
+
+}
+
+func AddToWishList(userID int, productID int) error {
+	err := database.DB.Exec("insert into wish_lists (user_id,product_id) values (?, ?)", userID, productID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetWishList(userId int) ([]models.WishListResponse, error) {
+	var wishList []models.WishListResponse
+	err := database.DB.Raw("select products.id as product_id,products.name as product_name,products.price as product_price from products inner join wish_lists on products.id=wish_lists.product_id where wish_lists.user_id=?", userId).Scan(&wishList).Error
+	if err != nil {
+		return []models.WishListResponse{}, err
+	}
+	return wishList, nil
+}
+func RemoveFromWishlist(userID int, productId int) error {
+	err := database.DB.Exec("delete from wish_lists where user_id=? and product_id =?", userID, productId).Error
+	if err != nil {
+		return err
+
+	}
+	return nil
+}
