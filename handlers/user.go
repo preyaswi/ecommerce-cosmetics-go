@@ -248,3 +248,24 @@ func RemoveFromWishlist(c *gin.Context) {
 	successRes := response.ClientResponse(http.StatusOK, "SuccessFully removed product from the wishlist", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 }
+func ApplyReferral(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+	message, err :=usecase.ApplyReferral(userID.(int))
+
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusInternalServerError, "could not add referral amount", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errRes)
+		return
+	}
+
+	if message != "" {
+		errRes := response.ClientResponse(http.StatusOK, message, nil, nil)
+		c.JSON(http.StatusOK, errRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "successfully added referral amount", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}

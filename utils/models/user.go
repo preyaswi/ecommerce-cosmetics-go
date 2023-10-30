@@ -6,6 +6,7 @@ type SignupDetail struct {
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
 	Password  string `json:"password"`
+	ReferralCode    string `json:"referral_code"`
 }
 
 type SignupDetailResponse struct {
@@ -76,7 +77,7 @@ type UsersProfileDetails struct {
 	Lastname  string `json:"lastname"`
 	Email     string `json:"email" `
 	Phone     string `json:"phone"`
-	// ReferralCode string `json:"referral_code" binding:"required"`
+	ReferralCode string `json:"referral_code" binding:"required"`
 }
 
 type CheckoutDetails struct {
