@@ -30,8 +30,8 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	//wishlist
 	r.POST("/wish-list/add/:id", middleware.AuthMiddleware(), handlers.AddWishList)
 	r.GET("/wish-list", middleware.AuthMiddleware(), handlers.GetWishList)
-	r.DELETE("/wish-list/delete/:id", middleware.AuthMiddleware(),handlers.RemoveFromWishlist)
-	
+	r.DELETE("/wish-list/delete/:id", middleware.AuthMiddleware(), handlers.RemoveFromWishlist)
+
 	//cart
 	r.POST("/add-to-cart/:id", middleware.AuthMiddleware(), handlers.AddToCart)
 	r.DELETE("/remove-from-cart/:id", middleware.AuthMiddleware(), handlers.RemoveFromCart)
@@ -46,6 +46,9 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	r.GET("/checkout", middleware.AuthMiddleware(), handlers.CheckOut)
 	r.GET("/place-order/:address_id/:payment", middleware.AuthMiddleware(), handlers.PlaceOrder)
+
+	//coupon
+	r.POST("/coupon/apply", middleware.AuthMiddleware(),handlers.ApplyCoupon)
 
 	//payment
 	r.GET("/payment", handlers.MakePaymentRazorPay)

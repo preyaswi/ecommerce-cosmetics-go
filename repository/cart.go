@@ -205,3 +205,43 @@ func GetAllItemsFromCart(userID int) ([]models.Cart, error) {
 	return cartResponse, nil
 
 }
+func GetTotalPriceFromCart(userID int) (float64, error) {
+
+	var totalPrice float64
+	err := database.DB.Raw("select COALESCE(SUM(total_price), 0) from carts where user_id = ?", userID).Scan(&totalPrice).Error
+	if err != nil {
+		return 0.0, err
+	}
+
+	return totalPrice, nil
+
+}
+func UpdateUsedCoupon(coupon string, userID int) (bool, error) {
+
+	var couponID uint
+	err := database.DB.Raw("select id from coupons where coupon = ?", coupon).Scan(&couponID).Error
+	if err != nil {
+		return false, err
+	}
+
+	var count int
+	// if a coupon have already been added, replace the order with current coupon and delete the existing coupon
+	err = database.DB.Raw("select count(*) from used_coupons where user_id = ? and used = false", userID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		err = database.DB.Exec("delete from used_coupons where user_id = ? and used = false", userID).Error
+		if err != nil {
+			return false, err
+		}
+	}
+
+	err = database.DB.Exec("insert into used_coupons (coupon_id,user_id,used) values (?, ?, false)", couponID, userID).Error
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

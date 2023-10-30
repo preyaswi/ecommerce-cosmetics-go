@@ -33,6 +33,15 @@ func AdminRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/cancel-order/:order_id", middleware.AuthorizationMiddleware(), handlers.CancelOrderFromAdminSide)
 	//image cropping
 	r.POST("/image-crop", middleware.AuthorizationMiddleware(), handlers.CropImage)
+
+	//coupon
+	r.POST("/offer/coupons/add-coupons", middleware.AuthorizationMiddleware(), handlers.AddCoupon)
+	r.GET("/offer/coupons", middleware.AuthorizationMiddleware(), handlers.GetCoupon)
+	r.PATCH("/offer/coupons/expire/:id", middleware.AuthorizationMiddleware(), handlers.ExpireCoupon)
+
+	//product and category offer
+	r.POST("/offer/product-offer", middleware.AuthorizationMiddleware(), handlers.AddProdcutOffer)
+	r.POST("/offer/category-offer",middleware.AuthorizationMiddleware(),handlers.AddCategoryOffer)
 	return r
 
 }
