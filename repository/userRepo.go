@@ -6,6 +6,7 @@ import (
 	"firstpro/domain"
 	"firstpro/utils/models"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -211,4 +212,43 @@ func RemoveFromWishlist(userID int, productId int) error {
 
 	}
 	return nil
+}
+
+func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
+
+	// check if the offer with the offer name already exist in the database
+	var count int
+	err := database.DB.Raw("select count(*) from category_offers where offer_name = ?", categoryOffer.OfferName).Scan(&count).Error
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return errors.New("the offer already exists")
+	}
+
+	// if there is any other offer for this category delete that before adding this one
+	count = 0
+	err = database.DB.Raw("select count(*) from category_offers where category_id = ?", categoryOffer.CategoryID).Scan(&count).Error
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+
+		err = database.DB.Exec("delete from category_offers where category_id = ?", categoryOffer.CategoryID).Error
+		if err != nil {
+			return err
+		}
+	}
+
+	startDate := time.Now()
+	endDate := time.Now().Add(time.Hour * 24 * 5)
+	err = database.DB.Exec("INSERT INTO category_offers (category_id, offer_name, discount_percentage, start_date, end_date, offer_limit,offer_used) VALUES (?, ?, ?, ?, ?, ?, ?)", categoryOffer.CategoryID, categoryOffer.OfferName, categoryOffer.DiscountPercentage, startDate, endDate, categoryOffer.OfferLimit, 0).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }

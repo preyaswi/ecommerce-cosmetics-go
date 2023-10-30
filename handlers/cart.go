@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"firstpro/usecase"
+	"firstpro/utils/models"
 	"firstpro/utils/response"
 
 	"net/http"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
 
 func AddToCart(c *gin.Context) {
 	id := c.Param("id")
@@ -85,5 +85,28 @@ func EmptyCart(c *gin.Context) {
 	}
 	successRes := response.ClientResponse(http.StatusOK, "Cart emptied successfully", cart, nil)
 	c.JSON(http.StatusOK, successRes)
+
+}
+func ApplyCoupon(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+	var couponDetails models.CouponAddUser
+
+	if err := c.ShouldBindJSON(&couponDetails); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not bind the coupon", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	err := usecase.ApplyCoupon(couponDetails.CouponName, userID.(int))
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "coupon could not be added", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusCreated, "Coupon added successfully", nil, nil)
+	c.JSON(http.StatusCreated, successRes)
 
 }
