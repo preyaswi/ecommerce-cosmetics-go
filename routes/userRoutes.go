@@ -48,12 +48,14 @@ func Routes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/place-order/:address_id/:payment", middleware.AuthMiddleware(), handlers.PlaceOrder)
 
 	//coupon
-	r.POST("/coupon/apply", middleware.AuthMiddleware(),handlers.ApplyCoupon)
+	r.POST("/coupon/apply", middleware.AuthMiddleware(), handlers.ApplyCoupon)
+
+	//refferal
+	r.GET("/referral/apply", middleware.AuthMiddleware(), handlers.ApplyReferral)
 
 	//payment
 	r.GET("/payment", handlers.MakePaymentRazorPay)
 	r.GET("/payment-success", handlers.VerifyPayment)
-
 	return r
 
 }
