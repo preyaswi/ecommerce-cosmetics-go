@@ -27,14 +27,19 @@ func Routes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	{
 		address := r.Group("/address")
 		{
-			address.GET("/get", handlers.GetAllAddress)
+			address.GET("", handlers.GetAllAddress)
 			address.POST("/post", handlers.AddAddress)
+			address.PUT("put/:id", handlers.UpdateAddress)
+
 		}
+		users := r.Group("/users")
+		{
 
-		r.GET("/show-user-details", handlers.UserDetails)
-		r.PATCH("/edit-user-profile", middleware.AuthMiddleware(), handlers.UpdateUserDetails)
-		r.POST("/update-password", middleware.AuthMiddleware(), handlers.UpdatePassword)
-
+			users.GET("/show-user-details", handlers.UserDetails)
+			users.PATCH("/edit-user-profile", middleware.AuthMiddleware(), handlers.UpdateUserDetails)
+			users.POST("/update-password", middleware.AuthMiddleware(), handlers.UpdatePassword)
+		}
+		
 		//wishlist
 		wishlist := r.Group("/wishlist")
 		{

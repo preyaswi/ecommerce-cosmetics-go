@@ -94,7 +94,7 @@ func UserSignup(user models.SignupDetail) (*models.TokenUser, error) {
 
 		if referredUserId != 0 {
 			referralAmount := 100
-			err :=repository.UpdateReferralAmount(float64(referralAmount), referredUserId, userData.Id)
+			err := repository.UpdateReferralAmount(float64(referralAmount), referredUserId, userData.Id)
 			if err != nil {
 				return &models.TokenUser{}, err
 			}
@@ -177,6 +177,12 @@ func AddAddress(userId int, address models.AddressInfo) error {
 	}
 
 	return nil
+
+}
+
+func UpdateAddress(address models.AddressInfo, addressID int, userID int) (models.AddressInfoResponse, error) {
+
+	return repository.UpdateAddress(address, addressID, userID)
 
 }
 
@@ -289,19 +295,19 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		return models.CheckoutDetails{}, err
 	}
 
-	// discount reason - offer - coupon 
+	// discount reason - offer - coupon
 	var discountApplied []string
 	err = repository.DiscountReason(userID, "used_coupons", "COUPON APPLIED", &discountApplied)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
 
-	err =repository.DiscountReason(userID, "product_offer_useds", "PRODUCT OFFER APPLIED", &discountApplied)
+	err = repository.DiscountReason(userID, "product_offer_useds", "PRODUCT OFFER APPLIED", &discountApplied)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
 
-	err =repository.DiscountReason(userID, "category_offer_useds", "CATEGORY OFFER APPLIED", &discountApplied)
+	err = repository.DiscountReason(userID, "category_offer_useds", "CATEGORY OFFER APPLIED", &discountApplied)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
@@ -316,7 +322,6 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		DiscountReason:      discountApplied,
 	}, nil
 }
-
 
 func AddToWishlist(product_id int, user_id int) error {
 
