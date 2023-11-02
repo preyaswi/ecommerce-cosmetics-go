@@ -6,7 +6,6 @@ import (
 	"firstpro/helper"
 	"firstpro/repository"
 	"firstpro/utils/models"
-	"fmt"
 
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
@@ -19,7 +18,6 @@ func AdminLogin(adminDetail models.AdminDetail) (domain.TokenAdmin, error) {
 		return domain.TokenAdmin{}, err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(adminCompareDetails.Password), []byte(adminDetail.Password))
-	fmt.Println(adminCompareDetails.Password, "😂", adminDetail.Password, "😁")
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}
@@ -139,7 +137,6 @@ func ApproveOrder(orderID string) error {
 		return errors.New("the order is pending, cannot approve it")
 	}
 	if shipmentStatus == "processing" {
-		fmt.Println("reached here")
 		err := repository.ApproveOrder(orderID)
 
 		if err != nil {

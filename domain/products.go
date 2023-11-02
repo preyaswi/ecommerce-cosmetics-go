@@ -7,9 +7,10 @@ import (
 )
 
 type Products struct {
+	//validator use
 	*gorm.Model       `json:"-"`
 	ID                uint     `json:"id"   gorm:"unique; not null"`
-	Name              string   `json:"name"   gorm:"unique; not null"`
+	Name              string   `json:"name"   gorm:"unique; not null" validate:"required"`
 	SKU               string   `json:"sku"`
 	CategoryID        uint     `json:"category_id"`
 	Category          Category `json:"-" gorm:"foreignkey:CategoryID;constraint:OnDelete:CASCADE"`
@@ -22,7 +23,7 @@ type Products struct {
 }
 type Category struct {
 	ID           uint   `json:"id" gorm:"unique; not null"`
-	CategoryName string `json:"category_name"  gorm:"unique; not null"`
+	CategoryName string `json:"category_name"  gorm:"unique; not null"  validate:"required"`
 }
 type ProductImages struct {
 	ID              uint   `json:"id" gorm:"unique; not null"`

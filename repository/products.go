@@ -5,7 +5,6 @@ import (
 	database "firstpro/db"
 	"firstpro/domain"
 	"firstpro/utils/models"
-	"fmt"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -31,7 +30,6 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 		return nil, err
 	}
 
-	fmt.Println(productsBrief)
 
 	return productsBrief, nil
 
@@ -117,7 +115,6 @@ func UpdateProduct(pid int, quantity int) (models.ProductUpdateReciever, error) 
 }
 func DeleteProduct(productID string) error {
 	id, err := strconv.Atoi(productID)
-	fmt.Println(id)
 	if err != nil {
 		return errors.New("couldn't convert")
 	}
@@ -169,7 +166,6 @@ func UpdateCategory(current, new string) (domain.Category, error) {
 }
 func DeleteCategory(categoryID string) error {
 	id, err := strconv.Atoi(categoryID)
-	fmt.Println(id)
 	if err != nil {
 		return errors.New("couldn't convert")
 	}

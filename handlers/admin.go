@@ -4,7 +4,7 @@ import (
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
-	"fmt"
+
 
 	"net/http"
 	"strconv"
@@ -115,8 +115,6 @@ func BlockUser(c *gin.Context) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
-		fmt.Println(err.Error(), "😁")
-
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 
@@ -124,8 +122,6 @@ func BlockUser(c *gin.Context) {
 	err = usecase.BlockUser(id)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "user could not be blocked", nil, err.Error())
-		fmt.Println(err.Error(), "😊")
-
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	errorss "firstpro/error"
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
@@ -8,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func AddCoupon(c *gin.Context) {
@@ -16,6 +19,12 @@ func AddCoupon(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&coupon); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not bind the coupon details", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err := validator.New().Struct(coupon)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "constraints not satisfied", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
@@ -59,6 +68,12 @@ func ExpireCoupon(c *gin.Context) {
 
 	err = usecase.ExpireCoupon(couponID)
 	if err != nil {
+		///
+		if errors.Is(err,errorss.ErrCouponAlreadyexist){
+			errorRes := response.ClientResponse(http.StatusForbidden, "could not expire coupon", nil, err.Error())
+		c.JSON(http.StatusForbidden, errorRes)
+		return
+		}
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "could not expire coupon", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
@@ -77,10 +92,20 @@ func AddProdcutOffer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errRes)
 		return
 	}
-
-	err :=usecase.AddProductOffer(productOffer)
+	err := validator.New().Struct(productOffer)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "constraints not satisfied", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err = usecase.AddProductOffer(productOffer)
 
 	if err != nil {
+		if errors.Is(err, errorss.ErrOfferAlreadyexist) {
+			errRes := response.ClientResponse(http.StatusForbidden, "could not add offers", nil, err.Error())
+			c.JSON(http.StatusForbidden, errRes)
+			return
+		}
 		errRes := response.ClientResponse(http.StatusInternalServerError, "could not add offer", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errRes)
 		return
@@ -99,10 +124,20 @@ func AddCategoryOffer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errRes)
 		return
 	}
-
-	err :=usecase.AddCategoryOffer(categoryOffer)
+	err := validator.New().Struct(categoryOffer)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "constraints not satisfied", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err = usecase.AddCategoryOffer(categoryOffer)
 
 	if err != nil {
+		if errors.Is(err, errorss.ErrOfferAlreadyexist) {
+			errRes := response.ClientResponse(http.StatusForbidden, "could not add offers", nil, err.Error())
+			c.JSON(http.StatusForbidden, errRes)
+			return
+		}
 		errRes := response.ClientResponse(http.StatusInternalServerError, "could not add offer", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errRes)
 		return

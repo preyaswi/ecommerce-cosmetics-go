@@ -4,6 +4,7 @@ import (
 	"errors"
 	database "firstpro/db"
 	"firstpro/domain"
+	errorss "firstpro/error"
 	"firstpro/utils/models"
 	"fmt"
 	"time"
@@ -224,7 +225,7 @@ func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
 	}
 
 	if count > 0 {
-		return errors.New("the offer already exists")
+		return errorss.ErrOfferAlreadyexist
 	}
 
 	// if there is any other offer for this category delete that before adding this one
@@ -268,13 +269,50 @@ func GetReferralAndTotalAmount(userID int) (float64, float64, error) {
 	return cartDetails.ReferralAmount, cartDetails.TotalCartAmount, nil
 
 }
-func  UpdateSomethingBasedOnUserID(tableName string, columnName string, updateValue float64, userID int) error {
+func UpdateSomethingBasedOnUserID(tableName string, columnName string, updateValue float64, userID int) error {
 
 	err := database.DB.Exec("update "+tableName+" set "+columnName+" = ? where user_id = ?", updateValue, userID).Error
 	if err != nil {
 		database.DB.Rollback()
 		return err
 	}
+	return nil
+
+}
+func CreateReferralEntry(userDetails models.SignupDetailResponse, userReferral string) error {
+
+	err := database.DB.Exec("insert into referrals (user_id,referral_code,referral_amount) values (?,?,?)", userDetails.Id, userReferral, 0).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+func GetUserIdFromReferrals(ReferralCode string) (int, error) {
+
+	var referredUserId int
+	err := database.DB.Raw("select user_id from referrals where referral_code = ?", ReferralCode).Scan(&referredUserId).Error
+	if err != nil {
+		return 0, nil
+	}
+
+	return referredUserId, nil
+}
+
+func UpdateReferralAmount(referralAmount float64, referredUserId int, currentUserID int) error {
+
+	err := database.DB.Exec("update referrals set referral_amount = ?,referred_user_id = ? where user_id = ? ", referralAmount, referredUserId, currentUserID).Error
+	if err != nil {
+		return err
+	}
+
+	// find the current amount in referred users referral table and add 100 with that
+	err = database.DB.Exec("update referrals set referral_amount = referral_amount + ? where user_id = ? ", referralAmount, referredUserId).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 
 }

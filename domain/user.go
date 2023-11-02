@@ -26,9 +26,3 @@ type Address struct {
 	State     string `json:"state" validate:"required"`
 	Pin       string `json:"pin" validate:"required"`
 }
-type Wallet struct {
-	ID           uint    `json:"id" gorm:"unique;not null"`
-	UserID       uint    `json:"user_id"`
-	Users        User   `json:"-" gorm:"foreignkey:UserID"`
-	WalletAmount float64 `json:"wallet_amount"`
-}

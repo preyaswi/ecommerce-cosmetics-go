@@ -5,12 +5,12 @@ import (
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
-	"fmt"
 
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func ShowAllProducts(c *gin.Context) {
@@ -38,7 +38,6 @@ func ShowAllProducts(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(page, count, "👌")
 	products, err := usecase.ShowAllProducts(page, count)
 
 	if err != nil {
@@ -53,13 +52,11 @@ func ShowAllProducts(c *gin.Context) {
 
 func ShowIndividualProducts(c *gin.Context) {
 	idstr := c.Param("id")
-	fmt.Println(idstr, "😂")
 	id, err := strconv.Atoi(idstr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "str conversion failed"})
 	}
 	product, err := usecase.ShowIndividualProducts(id)
-	fmt.Println(product, "😊")
 	if err != nil {
 
 		errorRes := response.ClientResponse(http.StatusBadRequest, "path variables in wrong format", nil, err.Error())
@@ -78,8 +75,16 @@ func AddCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
+	err := validator.New().Struct(category)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "constraints not satisfied", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
 	categoryResponse, err := usecase.AddCategory(category)
 	if err != nil {
+		
 		errRes := response.ClientResponse(http.StatusBadRequest, "could not add the category", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errRes)
 		return
@@ -125,7 +130,6 @@ func FilterCategory(c *gin.Context) {
 	var data map[string]int
 
 	if err := c.ShouldBindJSON(&data); err != nil {
-		fmt.Println("afhcjamj")
 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
@@ -144,8 +148,15 @@ func FilterCategory(c *gin.Context) {
 }
 func AddProduct(c *gin.Context) {
 	var product domain.Products
+
 	if err := c.ShouldBindJSON(&product); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err := validator.New().Struct(product)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "constraints not satisfied", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}

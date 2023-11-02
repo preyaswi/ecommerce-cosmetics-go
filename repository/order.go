@@ -225,25 +225,7 @@ func UpdateCouponDetails(discount_price float64, UserID int) error {
 	}
 	return nil
 }
-func GetWalletAmount(UserID uint) (float64, error) {
 
-	var walletAvailable float64
-	err := database.DB.Raw("select wallet_amount from wallets where user_id = ?", UserID).Scan(&walletAvailable).Error
-	if err != nil {
-		return 0.0, err
-	}
-
-	return walletAvailable, nil
-}
-func UpdateWalletAmount(walletAmount float64, UserID uint) error {
-
-	err := database.DB.Exec("update wallets set wallet_amount = ? where user_id = ? ", walletAmount, UserID).Error
-	if err != nil {
-		return err
-	}
-	return nil
-
-}
 
 func CreateOrder(orderDetails domain.Order) error {
 

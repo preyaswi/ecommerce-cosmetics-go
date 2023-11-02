@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	database "firstpro/db"
+	errorss "firstpro/error"
 	"firstpro/utils/models"
 	"time"
 )
@@ -96,7 +97,7 @@ func ExistCoupon(couponID int) (bool, error) {
 	var count int
 	err := database.DB.Raw("select count(*) from coupons where id = ?", couponID).Scan(&count).Error
 	if err != nil {
-		return false, err
+		return false, errorss.ErrCouponAlreadyexist
 	}
 
 	return count > 0, nil
@@ -121,7 +122,6 @@ func CouponAlreadyExpired(couponID int) error {
 
 }
 func AddProductOffer(productOffer models.ProductOfferReceiver) error {
-
 	// check if the offer with the offer name already exist in the database
 	var count int
 	err := database.DB.Raw("select count(*) from product_offers where offer_name = ? and product_id = ?", productOffer.OfferName, productOffer.ProductID).Scan(&count).Error
@@ -130,7 +130,7 @@ func AddProductOffer(productOffer models.ProductOfferReceiver) error {
 	}
 
 	if count > 0 {
-		return errors.New("the offer already exists")
+		return errorss.ErrOfferAlreadyexist
 	}
 
 	// if there is any other offer for this product delete that before adding this one
@@ -152,6 +152,33 @@ func AddProductOffer(productOffer models.ProductOfferReceiver) error {
 	err = database.DB.Exec("INSERT INTO product_offers (product_id, offer_name, discount_percentage, start_date, end_date, offer_limit,offer_used) VALUES (?, ?, ?, ?, ?, ?, ?)", productOffer.ProductID, productOffer.OfferName, productOffer.DiscountPercentage, startDate, endDate, productOffer.OfferLimit, 0).Error
 	if err != nil {
 		return err
+	}
+
+	return nil
+
+}
+func GetReferralAmount(userID int) (models.ReferralAmount, error) {
+
+	// get referral amount associated with the user
+	var referralAmount models.ReferralAmount
+	err := database.DB.Raw("select referral_amount from referrals where user_id = ?", userID).Scan(&referralAmount).Error
+	if err != nil {
+		return models.ReferralAmount{}, err
+	}
+	return referralAmount, nil
+
+}
+func DiscountReason(userID int, tableName string, discountLabel string, discountApplied *[]string) error {
+
+	var count int
+	err := database.DB.Raw("select count(*) from "+tableName+" where used = false and user_id = ?", userID).Scan(&count).Error
+	if err != nil {
+		return err
+	}
+
+	if count != 0 {
+		*discountApplied = append(*discountApplied, discountLabel)
+		count = 0
 	}
 
 	return nil

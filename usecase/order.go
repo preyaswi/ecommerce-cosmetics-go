@@ -93,25 +93,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		orderDetails.ShipmentStatus = "pending"
 	}
 
-	// if the payment method is wallet
-	if orderBody.PaymentID == 3 {
-
-		walletAvailable, err := repository.GetWalletAmount(orderBody.UserID)
-		if err != nil {
-			return domain.OrderSuccessResponse{}, err
-		}
-
-		// if wallet amount is less than final amount - make payment status - not paid and shipment status pending
-		if walletAvailable < orderDetails.FinalPrice {
-			orderDetails.PaymentStatus = "not paid"
-			orderDetails.ShipmentStatus = "pending"
-			return domain.OrderSuccessResponse{}, errors.New("wallet amount is less than total amount")
-		} else {
-			repository.UpdateWalletAmount(walletAvailable-orderDetails.FinalPrice, orderBody.UserID)
-			orderDetails.PaymentStatus = "paid"
-		}
-
-	}
+	
 	err = repository.CreateOrder(orderDetails)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err

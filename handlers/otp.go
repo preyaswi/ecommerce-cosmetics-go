@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	errorss "firstpro/error"
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
@@ -45,6 +47,11 @@ func VerifyOTP(c *gin.Context) {
 	users, err := usecase.VerifyOTP(code)
 
 	if err != nil {
+		if errors.Is(err, errorss.ErrFailedTovalidateOtp) {
+			errorRes := response.ClientResponse(http.StatusForbidden, "failed to verify OTP", nil, err.Error())
+			c.JSON(http.StatusForbidden, errorRes)
+			return
+		}
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not verify OTP", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
