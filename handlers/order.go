@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 // func AddOrder(c *gin.Context) {
 // 	id := c.Param("id")
 // 	product_id, err := strconv.Atoi(id)
@@ -90,7 +91,6 @@ func GetOrderDetails(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
-	fmt.Println("full order details is ", fullOrderDetails)
 
 	successRes := response.ClientResponse(http.StatusOK, "Full Order Details", fullOrderDetails, nil)
 	c.JSON(http.StatusOK, successRes)

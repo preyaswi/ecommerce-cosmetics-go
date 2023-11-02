@@ -1,12 +1,12 @@
 package models
 
 type SignupDetail struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	Password  string `json:"password"`
-	ReferralCode    string `json:"referral_code"`
+	Firstname    string `json:"firstname"  validate:"required"`
+	Lastname     string `json:"lastname"  validate:"required"`
+	Email        string `json:"email"  validate:"required"`
+	Phone        string `json:"phone"  validate:"required"`
+	Password     string `json:"password"  validate:"required"`
+	ReferralCode string `json:"referral_code"`
 }
 
 type SignupDetailResponse struct {
@@ -73,17 +73,19 @@ type AddressInfo struct {
 	City      string `json:"city"`
 }
 type UsersProfileDetails struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Email     string `json:"email" `
-	Phone     string `json:"phone"`
+	Firstname    string `json:"firstname"`
+	Lastname     string `json:"lastname"`
+	Email        string `json:"email" `
+	Phone        string `json:"phone"`
 	ReferralCode string `json:"referral_code" binding:"required"`
 }
 
 type CheckoutDetails struct {
 	AddressInfoResponse []AddressInfoResponse
 	Payment_Method      []PaymentDetails
+	ReferralAmount      ReferralAmount
 	Cart                []Cart
 	Grand_Total         float64
 	Total_Price         float64
+	DiscountReason      []string
 }

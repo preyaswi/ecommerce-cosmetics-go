@@ -9,7 +9,7 @@ type Coupon struct {
 }
 
 type AddCoupon struct {
-	Coupon             string  `json:"coupon" binding:"required"`
+	Coupon             string  `json:"coupon" binding:"required" validate:"required"`
 	DiscountPercentage int     `json:"discount_percentage" binding:"required"`
 	MinimumPrice       float64 `json:"minimum_price" binding:"required"`
 	Validity           bool    `json:"validity" binding:"required"`
@@ -30,4 +30,7 @@ type CategoryOfferReceiver struct {
 	OfferName          string `json:"offer_name" binding:"required"`
 	DiscountPercentage int    `json:"discount_percentage" binding:"required"`
 	OfferLimit         int    `json:"offer_limit" binding:"required"`
+}
+type ReferralAmount struct {
+	ReferralAmount float64 `json:"referral_amount"`
 }

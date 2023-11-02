@@ -8,7 +8,9 @@ import (
 	"firstpro/utils/models"
 	"fmt"
 	"regexp"
+	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -74,6 +76,32 @@ func UserSignup(user models.SignupDetail) (*models.TokenUser, error) {
 		return &models.TokenUser{}, errors.New("could not add the user ")
 	}
 
+	// create referral code for the user and send in details of referred id of user if it exist
+	id := uuid.New().ID()
+	str := strconv.Itoa(int(id))
+	userReferral := str[:8]
+	err = repository.CreateReferralEntry(userData, userReferral)
+	if err != nil {
+		return &models.TokenUser{}, err
+	}
+
+	if user.ReferralCode != "" {
+		// first check whether if a user with that referralCode exist
+		referredUserId, err := repository.GetUserIdFromReferrals(user.ReferralCode)
+		if err != nil {
+			return &models.TokenUser{}, err
+		}
+
+		if referredUserId != 0 {
+			referralAmount := 100
+			err :=repository.UpdateReferralAmount(float64(referralAmount), referredUserId, userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+
+		}
+	}
+
 	//creating a jwt token for the new user with the detail that has been stored in the database
 	accessToken, err := helper.GenerateAccessToken(userData)
 	if err != nil {
@@ -136,7 +164,6 @@ func UserLoginWithPassword(user models.LoginDetail) (*models.TokenUser, error) {
 }
 
 func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
-	fmt.Println("👏")
 	addressInfo, err := repository.GetAllAddress(userId)
 	if err != nil {
 		return models.AddressInfoResponse{}, err
@@ -224,12 +251,12 @@ func UpdatePassword(ctx context.Context, body models.UpdatePassword) error {
 		return err
 	}
 	if err := repository.UpdateUserPassword(string(hashedPassword), userID); err != nil {
-		fmt.Println(err)
 		return err
 	}
 	return nil
 }
 
+// user checkout section
 func Checkout(userID int) (models.CheckoutDetails, error) {
 
 	// list all address added by the user
@@ -245,7 +272,7 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 	}
 
 	// get all items from users cart
-	cartItems, err := repository.DisplayCart(userID)
+	cartItems, err := repository.GetAllItemsFromCart(userID)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
@@ -256,15 +283,40 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		return models.CheckoutDetails{}, err
 	}
 
+	// get referral amount
+	referralAmount, err := repository.GetReferralAmount(userID)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	// discount reason - offer - coupon 
+	var discountApplied []string
+	err = repository.DiscountReason(userID, "used_coupons", "COUPON APPLIED", &discountApplied)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	err =repository.DiscountReason(userID, "product_offer_useds", "PRODUCT OFFER APPLIED", &discountApplied)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
+	err =repository.DiscountReason(userID, "category_offer_useds", "CATEGORY OFFER APPLIED", &discountApplied)
+	if err != nil {
+		return models.CheckoutDetails{}, err
+	}
+
 	return models.CheckoutDetails{
 		AddressInfoResponse: allUserAddress,
 		Payment_Method:      paymentDetails,
 		Cart:                cartItems,
-
-		Grand_Total: grandTotal.TotalPrice,
-		Total_Price: grandTotal.FinalPrice,
+		ReferralAmount:      referralAmount,
+		Grand_Total:         grandTotal.TotalPrice,
+		Total_Price:         grandTotal.FinalPrice,
+		DiscountReason:      discountApplied,
 	}, nil
 }
+
 
 func AddToWishlist(product_id int, user_id int) error {
 
@@ -345,7 +397,7 @@ func ApplyReferral(userID int) (string, error) {
 		return "", err
 	}
 
-	err =repository.UpdateSomethingBasedOnUserID("carts", "total_price", totalCartAmount, userID)
+	err = repository.UpdateSomethingBasedOnUserID("carts", "total_price", totalCartAmount, userID)
 	if err != nil {
 		return "", err
 	}

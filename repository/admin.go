@@ -6,7 +6,6 @@ import (
 	"firstpro/domain"
 	"firstpro/helper"
 	"firstpro/utils/models"
-	"fmt"
 
 	"time"
 
@@ -200,7 +199,6 @@ func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesRe
 	if result.Error != nil {
 		return models.SalesReport{}, result.Error
 	}
-	fmt.Println(salesReport.TrendingProduct)
 
 	return salesReport, nil
 }
