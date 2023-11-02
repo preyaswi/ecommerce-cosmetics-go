@@ -75,6 +75,24 @@ func AddAddress(userId int, address models.AddressInfo) error {
 	}
 	return nil
 }
+
+func UpdateAddress(address models.AddressInfo, addressID int, userID int) (models.AddressInfoResponse, error) {
+
+	err := database.DB.Exec("update addresses set house_name = ?, state = ?, pin = ?, street = ?, city = ? where id = ? and user_id = ?", address.HouseName, address.State, address.Pin, address.Street, address.City, addressID, userID).Error
+	if err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+
+	var addressResponse models.AddressInfoResponse
+	err = database.DB.Raw("select * from addresses where id = ?", addressID).Scan(&addressResponse).Error
+	if err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+
+	return addressResponse, nil
+
+}
+
 func UserDetails(userID int) (models.UsersProfileDetails, error) {
 
 	var userDetails models.UsersProfileDetails

@@ -114,6 +114,41 @@ func AddAddress(c *gin.Context) {
 
 }
 
+func UpdateAddress(c *gin.Context) {
+
+	id := c.Param("id")
+	addressId, err := strconv.Atoi(id)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "address id not in the right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	userID, _ := c.Get("user_id")
+	user_id := userID.(int)
+
+	var address models.AddressInfo
+
+	if err := c.ShouldBindJSON(&address); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	updatedAddress, err :=usecase.UpdateAddress(address, addressId, user_id)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed updating address", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusCreated, "address updated successfully", updatedAddress, nil)
+	c.JSON(http.StatusCreated, successRes)
+
+}
+
 func UserDetails(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")
