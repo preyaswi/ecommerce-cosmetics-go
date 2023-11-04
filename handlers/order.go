@@ -11,33 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// func AddOrder(c *gin.Context) {
-// 	id := c.Param("id")
-// 	product_id, err := strconv.Atoi(id)
-// 	if err != nil {
-// 		errResponse := response.ClientResponse(http.StatusBadGateway, "Prodcut id is given in the wrong format", nil, err.Error())
-// 		c.JSON(http.StatusBadGateway, errResponse)
-// 		return
-// 	}
-// 	addressid := c.Param("address_id")
-// 	address_id, err := strconv.Atoi(addressid)
-// 	if err != nil {
-// 		errResponse := response.ClientResponse(http.StatusBadGateway, "address id is given in the wrong format", nil, err.Error())
-// 		c.JSON(http.StatusBadGateway, errResponse)
-// 		return
-// 	}
-// 	user_ID,_:=c.Get("user_id")
-// 	OrderResponse,err:=usecase.AddOrder(product_id,address_id,user_ID.(int))
-// 	if err != nil {
-// 		errRes := response.ClientResponse(http.StatusBadGateway, "could not order the product", nil, err.Error())
-// 		c.JSON(http.StatusBadGateway, errRes)
-// 		return
-// 	}
-// 	successRes := response.ClientResponse(200, "product ordered Successfully", OrderResponse, nil)
-// 	c.JSON(200, successRes)
-
-// }
-
+// @Summary Order Items from cart
+// @Description Order all products which is currently present inside  the cart
+// @Tags User Order
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param orderBody body models.OrderFromCart true "Order details"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/order [post]
 func OrderItemsFromCart(c *gin.Context) {
 
 	id, _ := c.Get("user_id")
@@ -61,6 +44,18 @@ func OrderItemsFromCart(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Get Order Details to user side
+// @Description Get all order details done by user to user side
+// @Tags User Order
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "page number"
+// @Param pageSize query string true "page size"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/orders/{id} [get]
 func GetOrderDetails(c *gin.Context) {
 
 	pageStr := c.Param("page")
@@ -96,7 +91,16 @@ func GetOrderDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 }
 
-
+// @Summary Cancel order
+// @Description Cancel order by the user using order ID
+// @Tags User Order
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Order ID"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/cancel-order/{id} [put]
 func CancelOrder(c *gin.Context) {
 
 	orderID := c.Param("id")

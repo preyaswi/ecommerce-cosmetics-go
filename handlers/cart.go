@@ -11,6 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Add to Cart
+// @Description Add product to the cart using product id
+// @Tags User Cart
+// @Accept json
+// @Produce json
+// @Param id path string true "product-id"
+// @Security Bearer
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/cart/{id} [post]
 func AddToCart(c *gin.Context) {
 	id := c.Param("id")
 
@@ -33,6 +43,16 @@ func AddToCart(c *gin.Context) {
 
 }
 
+// @Summary Remove product from cart
+// @Description Remove specified product of quantity 1 from cart using product id
+// @Tags User Cart
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Product id"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/cart/{id} [delete]
 func RemoveFromCart(c *gin.Context) {
 	id := c.Param("id")
 	product_id, err := strconv.Atoi(id)
@@ -58,6 +78,15 @@ func RemoveFromCart(c *gin.Context) {
 
 }
 
+// @Summary Display Cart
+// @Description Display all products of the cart along with price of the product and grand total
+// @Tags User Cart
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/cart [get]
 func DisplayCart(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")
@@ -73,6 +102,16 @@ func DisplayCart(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Delete all Items Present inside the Cart
+// @Description Remove all product from cart
+// @Tags User Cart
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/cart [delete]
 func EmptyCart(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	// user_ID := c.Query("user_id")
@@ -87,6 +126,17 @@ func EmptyCart(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Apply coupon on Checkout Section
+// @Description Add coupon to get discount on Checkout section
+// @Tags User Checkout
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param couponDetails body models.CouponAddUser true "Add coupon to order"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/coupon/apply [post]
 func ApplyCoupon(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")

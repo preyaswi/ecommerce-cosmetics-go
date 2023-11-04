@@ -10,6 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Crop Product Image
+// @Description croping of an exsisting image
+// @Tags Image Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param product_image_id query string true "Page Count"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/image-crop [post]
 func CropImage(c *gin.Context) {
 	imageId := c.Query("product_image_id")
 	imageID, err := strconv.Atoi(imageId)
@@ -31,7 +41,7 @@ func CropImage(c *gin.Context) {
 		return
 	}
 
-	cropRect := image.Rect(100, 100, 400, 400) 
+	cropRect := image.Rect(100, 100, 400, 400)
 
 	croppedImage := imaging.Crop(inputImage, cropRect)
 

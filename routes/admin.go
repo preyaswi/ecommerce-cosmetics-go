@@ -23,7 +23,7 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		{
 			users.GET("", handlers.GetUsers)
 			users.GET("/:page", handlers.GetUsers)
-			users.POST("/post", handlers.AddNewUsers)
+			users.POST("", handlers.AddNewUsers)
 			users.GET("/block-users/:id", handlers.BlockUser)
 			users.GET("/un-block-users/:id", handlers.UnBlockUser)
 		}
@@ -31,17 +31,17 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		//products management
 		products := r.Group("/products")
 		{
-			products.POST("/post", handlers.AddProduct)
-			products.PUT("/put", handlers.UpdateProduct) //update the product quantity
-			products.DELETE("/delete", handlers.DeleteProduct)
+			products.POST("", handlers.AddProduct)
+			products.PUT("", handlers.UpdateProduct) //update the product quantity
+			products.DELETE("", handlers.DeleteProduct)
 
 		}
 		//category management
 		category := r.Group("/category")
 		{
-			category.POST("/post", handlers.AddCategory)
-			category.PUT("/update", handlers.UpdateCategory)
-			category.DELETE("/delete", handlers.DeleteCategory)
+			category.POST("", handlers.AddCategory)
+			category.PUT("", handlers.UpdateCategory)
+			category.DELETE("/:id", handlers.DeleteCategory)
 
 		}
 
@@ -53,14 +53,14 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		}
 
 		//image cropping
-		r.POST("/image-crop", middleware.AuthorizationMiddleware(), handlers.CropImage)
+		r.POST("/image-crop", handlers.CropImage)
 
 		offer := r.Group("/offer")
 		{
 			//coupon
 			coupons := offer.Group("/coupons")
 			{
-				coupons.POST("/post", handlers.AddCoupon)
+				coupons.POST("", handlers.AddCoupon)
 				coupons.GET("", handlers.GetCoupon)
 				coupons.PATCH("/expire/:id", handlers.ExpireCoupon)
 
