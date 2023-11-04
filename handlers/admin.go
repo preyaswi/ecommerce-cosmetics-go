@@ -5,15 +5,22 @@ import (
 	"firstpro/utils/models"
 	"firstpro/utils/response"
 
-
 	"net/http"
 	"strconv"
-
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
+// @Summary Admin Login
+// @Description Login handler for admin
+// @Tags Admin Authentication
+// @Accept json
+// @Produce json
+// @Param  admin body models.AdminDetail true "Admin login details"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/admin-login [post]
 func AdminLogin(c *gin.Context) {
 	var adminDetail models.AdminDetail
 	if err := c.ShouldBindJSON(&adminDetail); err != nil {
@@ -32,6 +39,16 @@ func AdminLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Admin Dashboard
+// @Description Get Amin Home Page with Complete Details
+// @Tags Admin Dash Board
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/dashboard [GET]
 func DashBoard(c *gin.Context) {
 
 	adminDashBoard, err := usecase.DashBoard()
@@ -46,6 +63,17 @@ func DashBoard(c *gin.Context) {
 
 }
 
+// @Summary Get Users Details To Admin
+// @Description Retrieve users with pagination to admin side
+// @Tags Admin User Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param page path string true "Page number"
+// @Param pageSize query string true "page size"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/users/{page} [get]
 func GetUsers(c *gin.Context) {
 
 	pageStr := c.Param("page")
@@ -85,6 +113,16 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 }
 
+// @Summary Create User By Admin
+// @Description Create a new user from admin side
+// @Tags Admin User Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param  userDetails body models.SignupDetail true "Add a new user"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/users [POST]
 func AddNewUsers(c *gin.Context) {
 	var newUser models.SignupDetail
 	if err := c.ShouldBindJSON(&newUser); err != nil {
@@ -109,6 +147,16 @@ func AddNewUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, succRes)
 }
 
+// @Summary Block  user
+// @Description Block an existing user using user id
+// @Tags Admin User Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "user-id"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/users/block-users/{id} [POST]
 func BlockUser(c *gin.Context) {
 
 	idStr := c.Param("id")
@@ -130,6 +178,17 @@ func BlockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Unblock  User
+// @Description Unblock an already blocked user using user id
+// @Tags Admin User Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "user-id"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/users/unblock-users/{id} [POST]
 func UnBlockUser(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -150,6 +209,16 @@ func UnBlockUser(c *gin.Context) {
 
 }
 
+// @Summary Approve Order
+// @Description Approve Order from admin side which is in processing state
+// @Tags Admin Order Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Order ID"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/orders/approve-order/{id} [get]
 func ApproveOrder(c *gin.Context) {
 
 	orderId := c.Param("order_id")
@@ -167,6 +236,16 @@ func ApproveOrder(c *gin.Context) {
 
 }
 
+// @Summary Cancel Order Admin
+// @Description Cancel Order from admin side
+// @Tags Admin Order Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Order ID"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/orders/cancel-order/{id} [get]
 func CancelOrderFromAdminSide(c *gin.Context) {
 
 	orderID := c.Param("order_id")
@@ -183,6 +262,18 @@ func CancelOrderFromAdminSide(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Filtered Sales Report
+// @Description Get Filtered sales report by week, month and year
+// @Tags Admin Dash Board
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param period path string true "sales report"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/sales-report/{period} [GET]
+
 func FilteredSalesReport(c *gin.Context) {
 
 	timePeriod := c.Param("period")

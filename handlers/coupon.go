@@ -13,6 +13,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// @Summary Add  a new coupon by Admin
+// @Description Add A new Coupon which can be used by the users from the checkout section
+// @Tags Admin Offer Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param coupon body models.AddCoupon true "Add new Coupon"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/offer/coupons [post]
 func AddCoupon(c *gin.Context) {
 
 	var coupon models.AddCoupon
@@ -41,6 +51,16 @@ func AddCoupon(c *gin.Context) {
 	c.JSON(http.StatusCreated, successRes)
 
 }
+
+// @Summary Get coupon details
+// @Description Get Available coupon details for admin side
+// @Tags Admin Offer Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/offer [get]
 func GetCoupon(c *gin.Context) {
 
 	coupons, err := usecase.GetCoupon()
@@ -55,6 +75,17 @@ func GetCoupon(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Expire Coupon
+// @Description Expire Coupon by admin which are already present by passing coupon id
+// @Tags Admin Offer Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id path string true "Coupon id"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/offer/coupons/expire/{id} [patch]
 func ExpireCoupon(c *gin.Context) {
 
 	id := c.Param("id")
@@ -69,10 +100,10 @@ func ExpireCoupon(c *gin.Context) {
 	err = usecase.ExpireCoupon(couponID)
 	if err != nil {
 		///
-		if errors.Is(err,errorss.ErrCouponAlreadyexist){
+		if errors.Is(err, errorss.ErrCouponAlreadyexist) {
 			errorRes := response.ClientResponse(http.StatusForbidden, "could not expire coupon", nil, err.Error())
-		c.JSON(http.StatusForbidden, errorRes)
-		return
+			c.JSON(http.StatusForbidden, errorRes)
+			return
 		}
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "could not expire coupon", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
@@ -83,6 +114,17 @@ func ExpireCoupon(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary Add  Product Offer
+// @Description Add a new Offer for a product by specifying a limit
+// @Tags Admin Offer Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param coupon body models.ProductOfferReceiver true "Add new Product Offer"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/offer/product-offer [post]
 func AddProdcutOffer(c *gin.Context) {
 
 	var productOffer models.ProductOfferReceiver
@@ -115,6 +157,17 @@ func AddProdcutOffer(c *gin.Context) {
 	c.JSON(http.StatusCreated, successRes)
 
 }
+
+// @Summary Add  Category Offer
+// @Description Add a new Offer for a Category by specifying a limit
+// @Tags Admin Offer Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param coupon body models.CategoryOfferReceiver true "Add new Category Offer"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/offer/category-offer [post]
 func AddCategoryOffer(c *gin.Context) {
 
 	var categoryOffer models.CategoryOfferReceiver
