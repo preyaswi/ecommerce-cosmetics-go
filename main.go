@@ -9,6 +9,7 @@ import (
 
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -47,6 +48,12 @@ func main() {
 
 	router := gin.Default()
 	router.LoadHTMLGlob("template/*")
+
+	corss := cors.DefaultConfig()
+	corss.AllowOrigins = []string{"*"}
+	corss.AllowMethods = []string{"GET", "POST", "PUT", "POST"}
+	router.Use(cors.New(corss))
+
 	userGroup := router.Group("/user")
 	adminGroup := router.Group("/admin")
 	routes.Routes(userGroup, db)

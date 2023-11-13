@@ -55,3 +55,27 @@ func CropImage(c *gin.Context) {
 	c.JSON(200, response.ClientResponse(200, "Image cropped and saved successfully", nil, nil))
 
 }
+
+// func UploadImage(c *gin.Context) {
+// 	cfg, _ := config.LoadConfig()
+
+// 	cld, err := cloudinary.NewFromParams(cfg.CLOUD_NAME, cfg.API_KEY_FOR_CLOUDINARY, cfg.API_SECRET_FOR_CLOUDINARY)
+// 	if err != nil {
+// 		errRes := response.ClientResponse(500, "Failed to intialize Cloudinary", nil, err)
+// 		c.JSON(500, errRes)
+// 		return
+// 	}
+
+// 	ctx := context.Background()
+
+// 	// resp, err := cld.Upload.Upload(ctx, "my_image.jpg", uploader.UploadParams{})
+// 	uploadResult, err := cld.Upload.Upload(
+//         ctx,
+//         "https://cloudinary-res.cloudinary.com/image/upload/cloudinary_logo.png",
+//         uploader.UploadParams{PublicID: "logo"})
+//     if err != nil {
+//         log.Fatalf("Failed to upload file, %v\n", err)
+//     }
+// ​
+//     log.Println(uploadResult.SecureURL)
+// }

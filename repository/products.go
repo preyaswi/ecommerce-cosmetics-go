@@ -64,7 +64,7 @@ WHERE
 
 func AddProduct(product domain.Products) (domain.Products, error) {
 	var p models.ProductReceiver
-	err := database.DB.Raw("insert into products (name,sku,category_id,design_description,brand_id,quantity,price,product_status) values (?,?,?,?,?,?,?,?) returning name,sku,category_id,design_description,brand_id,quantity,price,product_status", product.Name, product.SKU, product.CategoryID, product.DesignDescription, product.BrandID, product.Quantity, product.Price, product.ProductStatus).Scan(&p).Error
+	err := database.DB.Raw("inption,brand_id,sert into products (name,sku,category_id,design_descriquantity,price,product_status) values (?,?,?,?,?,?,?,?) returning name,sku,category_id,design_description,brand_id,quantity,price,product_status", product.Name, product.SKU, product.CategoryID, product.DesignDescription, product.BrandID, product.Quantity, product.Price, product.ProductStatus).Scan(&p).Error
 	if err != nil {
 		return domain.Products{}, err
 	}

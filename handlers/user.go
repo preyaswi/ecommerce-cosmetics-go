@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"errors"
+	errorss "firstpro/error"
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
@@ -41,6 +43,16 @@ func Signup(c *gin.Context) {
 
 	userCreated, err := usecase.UserSignup(userSignup)
 	if err != nil {
+		if errors.Is(err, errorss.ErrEmailAlreadyExist) {
+			errRes := response.ClientResponse(http.StatusForbidden, "email already exist", nil, err.Error())
+			c.JSON(http.StatusForbidden, errRes)
+			return
+		}
+		if errors.Is(err, errorss.ErrPhoneAlreadyExist) {
+			errRes := response.ClientResponse(http.StatusForbidden, "phonenumber already exist", nil, err.Error())
+			c.JSON(http.StatusForbidden, errRes)
+			return
+		}
 		errRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong formaaaaat", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errRes)
 		return

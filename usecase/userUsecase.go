@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	errorss "firstpro/error"
 	"firstpro/helper"
 	"firstpro/repository"
 	"firstpro/utils/models"
@@ -51,7 +52,7 @@ func UserSignup(user models.SignupDetail) (*models.TokenUser, error) {
 		return &models.TokenUser{}, errors.New("error with server")
 	}
 	if email != nil {
-		return &models.TokenUser{}, errors.New("user with this email is already exists")
+		return &models.TokenUser{}, errorss.ErrEmailAlreadyExist
 	}
 
 	phone, err := repository.CheckUserExistsByPhone(user.Phone)

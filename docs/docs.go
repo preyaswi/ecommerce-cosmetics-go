@@ -2009,7 +2009,7 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 20,
-                    "minLength": 8
+                    "minLength": 6
                 }
             }
         },
