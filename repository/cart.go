@@ -22,14 +22,13 @@ func CheckProduct(product_id int) (bool, string, error) {
 		err := database.DB.Raw("SELECT categories.category_name FROM categories INNER JOIN products ON products.category_id = categories.id WHERE products.id = ?", product_id).Scan(&category).Error
 
 		if err != nil {
-
-			
 			return false, "", err
 		}
 		return true, category, nil
 	}
 	return false, "", nil
 }
+
 // func CheckAddress(address_id int, user_id int) (bool, error) {
 // 	var count int
 
