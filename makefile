@@ -1,2 +1,4 @@
+.PHONY: run
+
 run:
-	go run main.go
+	swag init &&go run main.go
