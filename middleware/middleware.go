@@ -3,23 +3,20 @@ package middleware
 import (
 	"firstpro/helper"
 	"firstpro/utils/response"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMIddleware() gin.HandlerFunc {
+func AuthorizationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenHeader := c.GetHeader("Authorization")
-		fmt.Println(tokenHeader, "this is the token header")
 		if tokenHeader == "" {
 			response := response.ClientResponse(http.StatusUnauthorized, "No auth header provided", nil, nil)
 			c.JSON(http.StatusUnauthorized, response)
 			c.Abort()
 			return
-
 		}
 
 		splitted := strings.Split(tokenHeader, " ")

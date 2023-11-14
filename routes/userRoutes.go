@@ -8,35 +8,78 @@ import (
 	"gorm.io/gorm"
 )
 
-func UserRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
+func Routes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.POST("/signup", handlers.Signup)
 	r.POST("/login-with-password", handlers.UserLoginWithPassword)
 
 	r.POST("/send-otp", handlers.SendOTP)
 	r.POST("/verify-otp", handlers.VerifyOTP)
 
-	r.GET("/products", handlers.ShowAllProducts)
-	r.GET("/products/page/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
-	r.GET("/products/:id", handlers.ShowIndividualProducts)
-
-	//ADMIN LOGIN
-	r.POST("/admin-login", handlers.AdminLogin)
-	r.Use(middleware.AuthMIddleware())
+	products := r.Group("/products")
 	{
+		products.GET("", handlers.ShowAllProducts)
+		products.GET("/page/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
+		products.GET("/:id", handlers.ShowIndividualProducts)
+		products.POST("/filter", handlers.FilterCategory)
 
-		r.GET("/dashboard", handlers.DashBoard)
-		r.GET("/get-users", handlers.GetUsers)
-		r.GET("get-users/:page", handlers.GetUsers)
-		r.POST("get-users/add-users", handlers.AddNewUsers)
-		r.GET("/get-users/block-users/:id", handlers.BlockUser)
-		r.GET("/get-users/un-block-users/:id", handlers.UnBlockUser)
-		// r.GET("/products", handlers.ShowAllProducts)
-		// r.POST("/products/add-product", handlers.AddProduct)
-		r.POST("/category/add", handlers.AddCategory)
-		r.PUT("/category/update", handlers.UpdateCategory)
-		r.DELETE("/category/delete",handlers.DeleteCategory)
+	}
+	r.Use(middleware.AuthMiddleware())
+	{
+		address := r.Group("/address")
+		{
+			address.GET("", handlers.GetAllAddress)
+			address.POST("", handlers.AddAddress)
+			address.PUT("/:id", handlers.UpdateAddress)
+
+		}
+		users := r.Group("/users")
+		{
+
+			users.GET("", handlers.UserDetails)
+			users.PUT("", handlers.UpdateUserDetails)
+			users.PUT("/update-password", handlers.UpdatePassword)
+		}
+
+		//wishlist
+		wishlist := r.Group("/wishlist")
+		{
+
+			wishlist.POST("/:id", handlers.AddWishList)
+			wishlist.GET("", handlers.GetWishList)
+			wishlist.DELETE("/:id", handlers.RemoveFromWishlist)
+		}
+
+		//cart
+		cart := r.Group("/cart")
+		{
+			cart.POST("/:id", handlers.AddToCart)
+			cart.DELETE("/:id", handlers.RemoveFromCart)
+			cart.GET("", handlers.DisplayCart)
+			cart.DELETE("", handlers.EmptyCart)
+		}
+
+		//order
+		order := r.Group("/order")
+		{
+
+			order.POST("", handlers.OrderItemsFromCart)
+			order.GET("", handlers.GetOrderDetails)
+			order.GET("/:page", handlers.GetOrderDetails)
+			order.PUT("/:id", handlers.CancelOrder)
+		}
+		r.GET("/checkout", handlers.CheckOut)
+		r.GET("/place-order/:address_id/:payment", handlers.PlaceOrder)
+
+		//coupon
+		r.POST("/coupon/apply", handlers.ApplyCoupon)
+
+		//refferal
+		r.GET("/referral/apply", handlers.ApplyReferral)
 	}
 
+	//payment
+	r.GET("/payment", handlers.MakePaymentRazorPay)
+	r.GET("/payment-success", handlers.VerifyPayment)
 	return r
 
 }

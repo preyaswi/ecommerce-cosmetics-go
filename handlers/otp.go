@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	errorss "firstpro/error"
 	"firstpro/usecase"
 	"firstpro/utils/models"
 	"firstpro/utils/response"
@@ -10,6 +12,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary  OTP login
+// @Description Send OTP to Authenticate user
+// @Tags User OTP Login
+// @Accept json
+// @Produce json
+// @Param phone body models.OTPData true "phone number details"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/send-otp [post]
 func SendOTP(c *gin.Context) {
 	var phone models.OTPData
 
@@ -33,6 +44,15 @@ func SendOTP(c *gin.Context) {
 
 }
 
+// @Summary Verify OTP
+// @Description Verify OTP by passing the OTP in order to authenticate user
+// @Tags User OTP Login
+// @Accept json
+// @Produce json
+// @Param phone body models.VerifyData true "Verify OTP Details"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/verify-otp [post]
 func VerifyOTP(c *gin.Context) {
 
 	var code models.VerifyData
@@ -45,6 +65,11 @@ func VerifyOTP(c *gin.Context) {
 	users, err := usecase.VerifyOTP(code)
 
 	if err != nil {
+		if errors.Is(err, errorss.ErrFailedTovalidateOtp) {
+			errorRes := response.ClientResponse(http.StatusForbidden, "failed to verify OTP", nil, err.Error())
+			c.JSON(http.StatusForbidden, errorRes)
+			return
+		}
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not verify OTP", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return

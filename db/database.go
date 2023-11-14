@@ -21,10 +21,24 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 	DB = db
 	DB.AutoMigrate(&domain.User{})
 	db.AutoMigrate(&domain.Products{})
+	db.AutoMigrate(&domain.Category{})
 	db.AutoMigrate(&domain.Admin{})
-	
-
-
+	db.AutoMigrate(&domain.Cart{})
+	db.AutoMigrate(&domain.Address{})
+	db.AutoMigrate(&domain.OrderItem{})
+	db.AutoMigrate(&domain.Order{})
+	db.AutoMigrate(&domain.RazerPay{})
+	db.AutoMigrate(&domain.PaymentMethod{})
+	db.AutoMigrate(&domain.ProductImages{})
+	db.AutoMigrate(&domain.Coupons{})
+	db.AutoMigrate(&domain.UsedCoupon{})
+	db.AutoMigrate(&domain.OrderCoupon{})
+	db.AutoMigrate(&domain.ProductOffer{})
+	db.AutoMigrate(&domain.CategoryOffer{})
+	db.AutoMigrate(&domain.Referral{})
+	db.AutoMigrate(&domain.ProductOfferUsed{})
+	db.AutoMigrate(&domain.CategoryOfferUsed{})
+	db.AutoMigrate(&domain.WishList{})
 	return DB, dberr
 
 }

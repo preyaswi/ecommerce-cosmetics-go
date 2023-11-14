@@ -6,7 +6,6 @@ import (
 	"firstpro/helper"
 	"firstpro/repository"
 	"firstpro/utils/models"
-	"fmt"
 
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
@@ -19,7 +18,6 @@ func AdminLogin(adminDetail models.AdminDetail) (domain.TokenAdmin, error) {
 		return domain.TokenAdmin{}, err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(adminCompareDetails.Password), []byte(adminDetail.Password))
-	fmt.Println(adminCompareDetails.Password, "😂", adminDetail.Password, "😁")
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}
@@ -46,16 +44,30 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 	if err != nil {
 		return models.CompleteAdminDashboard{}, err
 	}
+	orderDetails, err := repository.DashBoardOrder()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
 
 	productDetails, err := repository.DashBoardProductDetails()
 	if err != nil {
 		return models.CompleteAdminDashboard{}, err
 	}
-
+	totalRevenue, err := repository.TotalRevenue()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+	amountDetails, err := repository.AmountDetails()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
 	return models.CompleteAdminDashboard{
 
 		DashboardUser:    userDetails,
 		DashBoardProduct: productDetails,
+		DashboardOrder:   orderDetails,
+		DashboardRevenue: totalRevenue,
+		DashboardAmount:  amountDetails,
 	}, nil
 
 }
@@ -92,7 +104,7 @@ func UnBlockUser(id int) error {
 	if err != nil {
 		return err
 	}
-	if user.Blocked == false {
+	if !user.Blocked {
 		return errors.New("user is already unblocked")
 	} else {
 		user.Blocked = true
@@ -102,4 +114,73 @@ func UnBlockUser(id int) error {
 		return err
 	}
 	return nil
+}
+
+func ApproveOrder(orderID string) error {
+	ok, err := repository.CheckOrderID(orderID)
+	if !ok {
+		return err
+	}
+
+	shipmentStatus, err := repository.GetShipmentStatus(orderID)
+	if err != nil {
+		return err
+	}
+
+	if shipmentStatus == "cancelled" {
+
+		return errors.New("the order is cancelled, cannot approve it")
+	}
+
+	if shipmentStatus == "pending" {
+
+		return errors.New("the order is pending, cannot approve it")
+	}
+	if shipmentStatus == "processing" {
+		err := repository.ApproveOrder(orderID)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	// if the shipment status is not processing or cancelled. Then it is defenetely cancelled
+	return nil
+
+}
+
+func CancelOrderFromAdminSide(orderID string) error {
+
+	orderProducts, err := repository.GetProductDetailsFromOrders(orderID)
+	if err != nil {
+		return err
+	}
+
+	err = repository.CancelOrders(orderID)
+	if err != nil {
+		return err
+	}
+
+	// update the quantity to products since the order is cancelled
+	err = repository.UpdateQuantityOfProduct(orderProducts)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
+
+	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
+
+	salesReport, err := repository.FilteredSalesReport(startTime, endTime)
+	if err != nil {
+		return models.SalesReport{}, err
+	}
+
+	return salesReport, nil
+
 }

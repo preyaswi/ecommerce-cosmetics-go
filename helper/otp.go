@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"errors"
+	errorss "firstpro/error"
 	"fmt"
 
 	"github.com/twilio/twilio-go"
@@ -19,14 +19,13 @@ func TwilioSetup(username string, password string) {
 }
 
 func TwilioSendOTP(phone string, serviceID string) (string, error) {
-	
+
 	params := &twilioApi.CreateVerificationParams{}
 	params.SetTo("+91" + phone)
 	params.SetChannel("sms")
 
 	resp, err := client.VerifyV2.CreateVerification(serviceID, params)
 	if err != nil {
-		fmt.Println("sadfgfhhb")
 		return "", err
 	}
 
@@ -49,6 +48,6 @@ func TwilioVerifyOTP(serviceID string, code string, phone string) error {
 		return nil
 	}
 
-	return errors.New("failed to validate otp")
+	return errorss.ErrFailedTovalidateOtp
 
 }
