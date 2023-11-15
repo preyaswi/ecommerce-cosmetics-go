@@ -227,7 +227,7 @@ definitions:
       status_code:
         type: integer
     type: object
-host: www.zogfestiv.store
+host: https://ajay404.online/
 info:
   contact: {}
   description: API for ecommerce website

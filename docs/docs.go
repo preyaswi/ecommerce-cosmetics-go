@@ -2242,7 +2242,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "www.zogfestiv.store",
+	Host:             "https://ajay404.online/",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
 	Title:            "Cosmetics eCommerce API",
