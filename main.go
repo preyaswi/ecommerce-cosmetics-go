@@ -58,7 +58,7 @@ func main() {
 	adminGroup := router.Group("/admin")
 	routes.Routes(userGroup, db)
 	routes.AdminRoutes(adminGroup, db)
-	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	listenAddr := fmt.Sprintf("%s:%s", cfg.DBPort, cfg.DBHost)
 	fmt.Printf("Starting server on %s...\n", cfg.BASE_URL)
