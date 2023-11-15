@@ -16,7 +16,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title   Zog_festiv eCommerce API
+// @title   Cosmetics eCommerce API
 // @version  1.0
 // @description API for ecommerce website
 
@@ -31,12 +31,12 @@ import (
 
 // @schemes http
 func main() {
-	docs.SwaggerInfo.Title = "Zog_festiv"
-	docs.SwaggerInfo.Description = "Yo Yo Yo 148 3 to the 3 to the 6 to the 9 "
+	docs.SwaggerInfo.Title = "Cosmetics"
+	docs.SwaggerInfo.Description = "newly cosmetics "
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.BasePath = ""
-	docs.SwaggerInfo.Schemes = []string{"https"}
+	docs.SwaggerInfo.Schemes = []string{"http"}
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("error loading the config file")
@@ -51,7 +51,7 @@ func main() {
 
 	corss := cors.DefaultConfig()
 	corss.AllowOrigins = []string{"*"}
-	corss.AllowMethods = []string{"GET", "POST", "PUT", "POST"}
+	corss.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
 	router.Use(cors.New(corss))
 
 	userGroup := router.Group("/user")

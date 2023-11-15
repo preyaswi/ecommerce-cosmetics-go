@@ -5,7 +5,7 @@
     "swagger": "2.0",
     "info": {
         "description": "API for ecommerce website",
-        "title": "Zog_festiv eCommerce API",
+        "title": "Cosmetics eCommerce API",
         "contact": {},
         "license": {
             "name": "Apache 2.0",

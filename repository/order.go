@@ -226,7 +226,6 @@ func UpdateCouponDetails(discount_price float64, UserID int) error {
 	return nil
 }
 
-
 func CreateOrder(orderDetails domain.Order) error {
 
 	err := database.DB.Create(&orderDetails).Error

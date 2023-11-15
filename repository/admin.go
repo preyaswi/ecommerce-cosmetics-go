@@ -9,7 +9,6 @@ import (
 
 	"time"
 
-
 	"gorm.io/gorm"
 )
 
@@ -202,4 +201,3 @@ func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesRe
 
 	return salesReport, nil
 }
-

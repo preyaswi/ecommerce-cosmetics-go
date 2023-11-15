@@ -234,7 +234,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: Zog_festiv eCommerce API
+  title: Cosmetics eCommerce API
   version: "1.0"
 paths:
   /admin/admin-login:

@@ -40,7 +40,7 @@ func MakePaymentRazorPay(orderID string, userID int) (models.CombinedOrderDetail
 
 }
 
-func SavePaymentDetails(paymentID string,orderID string) error {
+func SavePaymentDetails(paymentID string, orderID string) error {
 
 	// to check whether the order is already paid
 	status, err := repository.CheckPaymentStatus(orderID)
