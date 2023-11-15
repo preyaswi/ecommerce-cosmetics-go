@@ -16,7 +16,7 @@ const docTemplate = `{
         },
         "version": "{{.Version}}"
     },
-    "host": "https://ajay404.online/",
+    "host": "ajay404.online",
     "basePath": "/",
     "paths": {
         "/admin/admin-login": {
