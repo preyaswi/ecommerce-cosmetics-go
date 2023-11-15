@@ -31,9 +31,9 @@ type SetNewName struct {
 
 type ProductUpdate struct {
 	ProductId int `json:"product_id"`
-	Quantity     int `json:"quantity"`
+	Quantity  int `json:"quantity"`
 }
 type ProductUpdateReciever struct {
 	ProductID int
-	Quantity     int
+	Quantity  int
 }

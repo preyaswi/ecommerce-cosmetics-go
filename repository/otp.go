@@ -24,7 +24,7 @@ func UserDetailsUsingPhone(phone string) (models.SignupDetailResponse, error) {
 	return usersDetails, nil
 
 }
-func  FindUserByEmail(email string) (bool, error) {
+func FindUserByEmail(email string) (bool, error) {
 
 	var count int
 	if err := database.DB.Raw("select count(*) from users where email = ?", email).Scan(&count).Error; err != nil {

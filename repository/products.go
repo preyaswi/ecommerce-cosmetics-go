@@ -30,7 +30,6 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 		return nil, err
 	}
 
-
 	return productsBrief, nil
 
 }

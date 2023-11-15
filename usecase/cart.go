@@ -184,7 +184,7 @@ func ApplyCoupon(coupon string, userID int) error {
 		return errors.New("cart empty, can't apply coupon")
 	}
 
-	couponExist, err :=repository.CouponExist(coupon)
+	couponExist, err := repository.CouponExist(coupon)
 	if err != nil {
 		return err
 	}
@@ -193,7 +193,7 @@ func ApplyCoupon(coupon string, userID int) error {
 		return errors.New("coupon does not exist")
 	}
 
-	couponValidity, err :=repository.CouponValidity(coupon)
+	couponValidity, err := repository.CouponValidity(coupon)
 	if err != nil {
 		return err
 	}
@@ -207,7 +207,7 @@ func ApplyCoupon(coupon string, userID int) error {
 		return err
 	}
 
-	totalPriceFromCarts, err :=repository.GetTotalPriceFromCart(userID)
+	totalPriceFromCarts, err := repository.GetTotalPriceFromCart(userID)
 	if err != nil {
 		return err
 	}

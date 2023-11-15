@@ -93,7 +93,6 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		orderDetails.ShipmentStatus = "pending"
 	}
 
-	
 	err = repository.CreateOrder(orderDetails)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err

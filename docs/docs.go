@@ -2245,7 +2245,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "www.zogfestiv.store",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
-	Title:            "Zog_festiv eCommerce API",
+	Title:            "Cosmetics eCommerce API",
 	Description:      "API for ecommerce website",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
