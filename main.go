@@ -51,7 +51,7 @@ func main() {
 
 	corss := cors.DefaultConfig()
 	corss.AllowOrigins = []string{"*"}
-	corss.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
+	corss.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	router.Use(cors.New(corss))
 
 	userGroup := router.Group("/user")
