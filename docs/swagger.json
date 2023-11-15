@@ -13,7 +13,7 @@
         },
         "version": "1.0"
     },
-    "host": "https://ajay404.online/",
+    "host": "ajay404.online",
     "basePath": "/",
     "paths": {
         "/admin/admin-login": {
