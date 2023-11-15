@@ -26,7 +26,7 @@ import (
 
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host   www.zogfestiv.store
+// @host   https://ajay404.online/
 // @BasePath  /
 
 // @schemes http
@@ -34,7 +34,7 @@ func main() {
 	docs.SwaggerInfo.Title = "Cosmetics"
 	docs.SwaggerInfo.Description = "newly cosmetics "
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Host = "https://ajay404.online/"
 	docs.SwaggerInfo.BasePath = ""
 	docs.SwaggerInfo.Schemes = []string{"http"}
 	cfg, err := config.LoadConfig()
@@ -58,7 +58,7 @@ func main() {
 	adminGroup := router.Group("/admin")
 	routes.Routes(userGroup, db)
 	routes.AdminRoutes(adminGroup, db)
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	listenAddr := fmt.Sprintf("%s:%s", cfg.DBPort, cfg.DBHost)
 	fmt.Printf("Starting server on %s...\n", cfg.BASE_URL)
