@@ -26,7 +26,7 @@ import (
 
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host   localhost:8080
+// @host   ajay404.online
 // @BasePath  /
 
 // @schemes http
@@ -34,7 +34,7 @@ func main() {
 	docs.SwaggerInfo.Title = "Cosmetics"
 	docs.SwaggerInfo.Description = "newly cosmetics "
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Host = "ajay404.online"
 	docs.SwaggerInfo.BasePath = ""
 	docs.SwaggerInfo.Schemes = []string{"http"}
 	cfg, err := config.LoadConfig()
