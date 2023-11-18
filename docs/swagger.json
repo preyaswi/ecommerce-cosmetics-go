@@ -13,7 +13,7 @@
         },
         "version": "1.0"
     },
-    "host": "ajay404.online",
+    "host": "localhost:8080",
     "basePath": "/",
     "paths": {
         "/admin/admin-login": {
@@ -2228,9 +2228,9 @@
         }
     },
     "securityDefinitions": {
-        "JWT": {
+        "Bearer": {
             "type": "apiKey",
-            "name": "token",
+            "name": "Authorization",
             "in": "header"
         }
     }

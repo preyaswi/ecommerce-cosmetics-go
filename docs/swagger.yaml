@@ -227,7 +227,7 @@ definitions:
       status_code:
         type: integer
     type: object
-host: https://ajay404.online/
+host: localhost:8080
 info:
   contact: {}
   description: API for ecommerce website
@@ -1424,8 +1424,8 @@ paths:
 schemes:
 - http
 securityDefinitions:
-  JWT:
+  Bearer:
     in: header
-    name: token
+    name: Authorization
     type: apiKey
 swagger: "2.0"
