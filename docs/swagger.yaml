@@ -227,7 +227,7 @@ definitions:
       status_code:
         type: integer
     type: object
-host: localhost:8080
+host: ajay404.online
 info:
   contact: {}
   description: API for ecommerce website
