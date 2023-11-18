@@ -16,8 +16,8 @@ const docTemplate = `{
         },
         "version": "{{.Version}}"
     },
-    "host": "ajay404.online",
-    "basePath": "/",
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
     "paths": {
         "/admin/admin-login": {
             "post": {
@@ -2231,9 +2231,9 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "JWT": {
+        "Bearer": {
             "type": "apiKey",
-            "name": "token",
+            "name": "Authorization",
             "in": "header"
         }
     }
@@ -2242,7 +2242,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "https://ajay404.online/",
+	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
 	Title:            "Cosmetics eCommerce API",
